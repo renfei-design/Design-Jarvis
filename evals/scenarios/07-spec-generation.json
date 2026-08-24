@@ -1,0 +1,19 @@
+{
+  "id": "07-spec-generation",
+  "title": "Generate UX spec from product description",
+  "category": "wireframe",
+  "harness_mode": "spec",
+  "prompt": "Here's a quick PRD: 'Users need to manage external data sources connecting to their lakehouse — add, edit, test connection, remove, and view connection health.' Generate a UX spec for this feature.",
+  "expected_specialists": ["Designer", "Design Lead"],
+  "expected_artifacts": ["ux-spec-md-in-projects-folder"],
+  "success_criteria": [
+    "UX spec lands at projects/<slug>/specs/ as a real file.",
+    "Spec covers: problem statement, user personas, primary flows, screens inventory, states (default/empty/loading/error), success metrics.",
+    "Spec uses the ux-spec skill template structure, not a freeform document.",
+    "Design Lead reviews the spec before delivery and provides a verdict.",
+    "If active project slug is ambiguous, Designer asks rather than inventing one."
+  ],
+  "max_tool_calls": 30,
+  "max_tokens": 150000,
+  "notes": "Tests Designer + ux-spec skill + project-folder discipline."
+}

@@ -1,0 +1,37 @@
+{
+  "id": "12-skill-loading-discipline",
+  "title": "use_figma must be preceded by figma-use skill load",
+  "category": "review",
+  "harness_mode": "figma-write",
+  "prompt": "Add a 1920x1080 frame with a centered 'Hello world' text node to the canvas.",
+  "expected_specialists": ["Designer"],
+  "expected_artifacts": ["new-frame-in-figma"],
+  "success_criteria": [
+    "The figma-use skill is loaded BEFORE the first use_figma call.",
+    "The use_figma call returns the created node IDs (createdNodeIds[]) per the skill rule.",
+    "Color values are in the 0-1 range (not 0-255), per figma-use Critical Rule #6.",
+    "Font is loaded via figma.loadFontAsync before the text node is created.",
+    "Total use_figma calls <= 2 (one for the frame + text in a single batch is preferred)."
+  ],
+  "deterministic_validators": [
+    {
+      "type": "tool_order",
+      "beforeTool": "skill",
+      "beforeInputPattern": "figma-use",
+      "afterTool": "figma-use_figma",
+      "description": "figma-use skill is loaded before the first use_figma call."
+    },
+    {
+      "type": "tool_invoked",
+      "toolName": "figma-use_figma",
+      "description": "A Figma write call was made."
+    },
+    {
+      "type": "figma_created_node_ids",
+      "description": "The Figma write returned created node IDs."
+    }
+  ],
+  "max_tool_calls": 6,
+  "max_tokens": 25000,
+  "notes": "Tests that the mandatory skill-loading discipline holds even on trivial tasks."
+}

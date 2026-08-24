@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>[DECK TITLE]</title>
+  <style>
+    /* ===========================================================
+        Jarvis Designer deck framework. Keep this block structural.
+
+       Contract:
+         - 1920x1080 fixed canvas, scaled to fit the viewport
+         - Only .slide.active is visible at a time
+         - Prev/next + counter live outside the scaled stage
+         - Keyboard, click focus, and stored position survive iframe focus
+         - Print renders one slide per page
+       =========================================================== */
+    :root {
+      /* Fallback tokens. Rebind these from the active DESIGN.md before final output. */
+      --bg: #050505;
+      --fg: #e4e4e7;
+      --muted: #8b8b94;
+      --accent: #2dd4a8;
+      --surface: rgba(255,255,255,0.06);
+      --shell: #0a0a0f;
+      --font-ui: -apple-system, system-ui, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--shell);
+      color: var(--fg);
+      font: 18px/1.5 var(--font-ui);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .deck-shell {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+    .deck-stage {
+      width: 1920px;
+      height: 1080px;
+      background: var(--bg);
+      position: relative;
+      transform-origin: top left;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+      flex-shrink: 0;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .slide.active { display: flex; }
+    .deck-stage > .slide:not(.center-slide) {
+      justify-content: center;
+      align-items: stretch;
+    }
+    .deck-counter {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(10, 14, 26, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font: 12px/1 var(--font-mono);
+      letter-spacing: 0.18em;
+      z-index: 1000;
+    }
+    .deck-counter button {
+      width: 36px; height: 36px;
+      background: transparent;
+      color: #fff;
+      border: 0;
+      border-radius: 50%;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background 0.15s;
+    }
+    .deck-counter button:hover { background: rgba(255, 255, 255, 0.12); }
+    .deck-counter button[disabled] { opacity: 0.3; cursor: default; }
+    .deck-counter .deck-count { padding: 0 14px; letter-spacing: 0.22em; }
+    .deck-counter .deck-count .total { color: rgba(255, 255, 255, 0.5); }
+    .deck-hint {
+      position: fixed;
+      bottom: 26px;
+      right: 28px;
+      color: rgba(255, 255, 255, 0.4);
+      font: 11px/1 var(--font-mono);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      z-index: 999;
+      pointer-events: none;
+    }
+    @media print {
+      @page { size: 1920px 1080px; margin: 0; }
+      html, body {
+        width: 1920px !important;
+        height: auto !important;
+        overflow: visible !important;
+        background: #fff !important;
+      }
+      .deck-shell {
+        position: static !important;
+        display: block !important;
+        inset: auto !important;
+      }
+      .deck-stage {
+        width: 1920px !important;
+        height: auto !important;
+        transform: none !important;
+        box-shadow: none !important;
+        position: static !important;
+      }
+      .slide {
+        display: flex !important;
+        position: relative !important;
+        inset: auto !important;
+        width: 1920px !important;
+        height: 1080px !important;
+        page-break-after: always;
+        break-after: page;
+      }
+      .slide:last-child { page-break-after: auto; break-after: auto; }
+      .deck-counter, .deck-hint { display: none !important; }
+    }
+  </style>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
+
+    :root {
+      /* Visual fallback tokens. The active DESIGN.md is the source of truth. */
+      --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+      --font-display: 'Silkscreen', 'Geist Mono', monospace;
+      --accent: #117865;
+      --teal-light: #1ba88c;
+      --teal-glow: rgba(17,120,101,0.35);
+      --stage-bg: #050505;
+      --bg-card: rgba(255,255,255,0.06);
+      --text: #e4e4e7;
+      --text-dim: #8b8b94;
+      --text-bright: #ffffff;
+      --accent: #2dd4a8;
+      --accent-orange: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-blue: #60a5fa;
+      --accent-purple: #a78bfa;
+      --radius: 0px;
+      --title-color: var(--text-bright);
+      --card-radius: var(--radius);
+    }
+
+    .dj-slide {
+      background: var(--stage-bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 28px;
+      font-weight: 400;
+      padding: 42px 72px;
+    }
+    .dj-slide:not(.center-slide) {
+      justify-content: center;
+      align-items: stretch;
+    }
+    .center-slide {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 36px 72px;
+    }
+    .slide-content {
+      font-family: var(--font-mono);
+      color: rgb(180,180,180);
+      text-align: left;
+      max-width: 1380px;
+      width: 100%;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .center-slide .slide-content {
+      text-align: center;
+      max-width: 1420px;
+    }
+    .pf-grid {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 60px 60px;
+      -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 40%, black 20%, transparent 100%);
+      mask-image: radial-gradient(ellipse 70% 70% at 50% 40%, black 20%, transparent 100%);
+    }
+    @keyframes pf-ping { 75%, 100% { transform: scale(2); opacity: 0; } }
+    @keyframes pf-blink { 50% { opacity: 0; } }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.03);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: rgb(128,128,128);
+      margin-bottom: 36px;
+    }
+    .status-dot {
+      position: relative;
+      width: 8px;
+      height: 8px;
+      display: inline-block;
+    }
+    .status-dot::before,
+    .status-dot::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: #22c55e;
+    }
+    .status-dot::before {
+      animation: pf-ping 1.6s cubic-bezier(0,0,0.2,1) infinite;
+      opacity: 0.75;
+    }
+    .status-dot::after { box-shadow: 0 0 6px rgba(34,197,94,0.6); }
+    .pill-primary { color: rgb(180,180,180); font-weight: 500; }
+    .pill-separator { color: rgb(80,80,80); }
+
+    .cover-title {
+      font-family: var(--font-display);
+      font-size: 3.6rem;
+      font-weight: 400;
+      color: var(--title-color);
+      letter-spacing: 0.01em;
+      line-height: 1.15;
+      margin: 0 0 22px;
+      text-transform: none;
+    }
+    .cover-subtitle {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 400;
+      color: rgb(128,128,128);
+      margin: 0 0 28px;
+      letter-spacing: 0;
+      text-transform: none;
+      text-shadow: none;
+      line-height: 1.5;
+    }
+    .cursor {
+      display: inline-block;
+      width: 9px;
+      height: 1em;
+      margin-left: 4px;
+      vertical-align: -3px;
+      background: rgb(128,128,128);
+      animation: pf-blink 1s step-end infinite;
+    }
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 12px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.03);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: rgb(150,150,150);
+      margin-bottom: 36px;
+    }
+    .section-label .number { color: rgb(34,197,94); }
+    .section-label .slash { color: rgb(80,80,80); }
+    .content-title {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--title-color);
+      line-height: 1.25;
+      margin: 0 0 14px;
+      letter-spacing: 0.01em;
+      text-transform: none;
+    }
+    .definition-title { margin-bottom: 28px; }
+    .lead {
+      font-family: var(--font-mono);
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: rgb(200,200,200);
+      margin: 0 0 18px;
+    }
+    .support {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      line-height: 1.65;
+      color: rgb(140,140,140);
+      margin: 0 0 48px;
+    }
+    .card-instruction {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: rgb(120,120,120);
+      margin: 0 0 28px;
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: 0.62em;
+      margin-top: 0.3em;
+    }
+    .compare-table th {
+      text-align: left;
+      padding: 10px 16px;
+      font-weight: 700;
+      color: var(--text-dim);
+      font-size: 0.85em;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border-bottom: 2px solid rgba(255,255,255,0.1);
+    }
+    .compare-table th:nth-child(3) { color: var(--accent); }
+    .compare-table td {
+      padding: 10px 16px;
+      vertical-align: top;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table td:first-child {
+      font-weight: 600;
+      color: var(--text-bright);
+      white-space: nowrap;
+    }
+    .compare-table td:nth-child(2) { color: var(--text-dim); }
+    .compare-table td:nth-child(3) { color: var(--text); }
+
+    .flip-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 18px;
+      margin: 8px 0 0;
+    }
+    .flip-card {
+      perspective: 1200px;
+      cursor: pointer;
+      display: block;
+      min-height: 320px;
+    }
+    .flip-card input { display: none; }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      min-height: 320px;
+      transform-style: preserve-3d;
+      transition: transform 0.55s cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+    .flip-card input:checked ~ .flip-card-inner { transform: rotateY(180deg); }
+    .flip-card-front,
+    .flip-card-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      padding: 22px 22px 18px;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: var(--card-radius);
+      background: rgba(255,255,255,0.025);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .flip-card:hover .flip-card-front,
+    .flip-card:hover .flip-card-back {
+      border-color: rgba(34,197,94,0.35);
+      background: rgba(34,197,94,0.04);
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+      background: rgba(34,197,94,0.04);
+      border-color: rgba(34,197,94,0.20);
+    }
+    .flip-card-num,
+    .flip-card-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: rgb(34,197,94);
+      text-transform: uppercase;
+    }
+    .flip-card-num { font-size: 11px; }
+    .flip-card-title {
+      font-family: var(--font-mono);
+      font-size: 1.05rem;
+      line-height: 1.35;
+      color: var(--title-color);
+      margin: 16px 0 0;
+      font-weight: 500;
+    }
+    .flip-card-hint {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: rgb(100,100,100);
+      text-transform: uppercase;
+    }
+    .flip-card-body {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      line-height: 1.65;
+      color: rgb(200,200,200);
+      margin: 14px 0 0;
+    }
+    .reading-callout {
+      font-family: var(--font-mono);
+      margin-top: 28px;
+      padding: 16px 22px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.03);
+      display: inline-block;
+      text-align: left;
+    }
+    .reading-callout-label {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgb(34,197,94);
+      margin-bottom: 8px;
+    }
+    .reading-callout a {
+      font-size: 0.95rem;
+      color: rgb(220,220,220);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(34,197,94,0.5);
+      padding-bottom: 1px;
+    }
+    .notes { display: none; }
+  </style>
+</head>
+<body>
+  <div class="deck-shell">
+    <div class="deck-stage" id="deck-stage">
+      <section class="slide dj-slide center-slide active" data-screen-label="01 Cover">
+        <div class="pf-grid"></div>
+        <div class="slide-content">
+          <div class="status-pill">
+            <span class="status-dot"></span>
+            <span class="pill-primary">[AUDIENCE / CONTEXT]</span>
+            <span class="pill-separator">|</span>
+            <span>[DATE]</span>
+          </div>
+          <h1 class="cover-title">[DECK&nbsp;TITLE]</h1>
+          <h2 class="cover-subtitle">[One-line subtitle].<span class="cursor"></span></h2>
+        </div>
+        <aside class="notes">[Speaker notes for the cover.]</aside>
+      </section>
+
+      <section class="slide dj-slide" data-screen-label="02 Definition">
+        <div class="slide-content">
+          <div class="section-label"><span class="number">01</span><span class="slash">/</span><span>[Section name]</span></div>
+          <h1 class="content-title definition-title">[Slide title].</h1>
+          <p class="lead">[Lead paragraph that sets the frame.]</p>
+          <p class="support">[Supporting paragraph or pivot to the table below.]</p>
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th style="width: 22%;">Dimension</th>
+                <th style="width: 39%;">[Old / Traditional]</th>
+                <th style="width: 39%;">[New]</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>[Row 1]</td><td>[Old description]</td><td>[New description]</td></tr>
+              <tr><td>[Row 2]</td><td>[Old description]</td><td>[New description]</td></tr>
+              <tr><td>[Row 3]</td><td>[Old description]</td><td>[New description]</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <aside class="notes">[Speaker notes.]</aside>
+      </section>
+
+      <section class="slide dj-slide" data-screen-label="03 Mindset shift">
+        <div class="slide-content">
+          <div class="section-label"><span class="number">02</span><span class="slash">/</span><span>Mindset shift 1</span></div>
+          <h1 class="content-title">Design for [X].</h1>
+          <p class="lead" style="line-height: 1.5; margin-bottom: 14px;">[One-line subtitle - the why.]</p>
+          <p class="card-instruction">Click each card to flip.</p>
+          <div class="flip-row">
+            <label class="flip-card">
+              <input type="checkbox">
+              <div class="flip-card-inner">
+                <div class="flip-card-front">
+                  <span class="flip-card-num">01 &nbsp;&middot;&nbsp; The broken contract</span>
+                  <h3 class="flip-card-title">[What broke - one short sentence.]</h3>
+                  <span class="flip-card-hint">Tap to reveal &rarr;</span>
+                </div>
+                <div class="flip-card-back">
+                  <span class="flip-card-eyebrow">What broke</span>
+                  <p class="flip-card-body">[2-3 sentence expansion.]</p>
+                </div>
+              </div>
+            </label>
+            <label class="flip-card">
+              <input type="checkbox">
+              <div class="flip-card-inner">
+                <div class="flip-card-front">
+                  <span class="flip-card-num">02 &nbsp;&middot;&nbsp; Example</span>
+                  <h3 class="flip-card-title">[A concrete example - one short sentence.]</h3>
+                  <span class="flip-card-hint">Tap to reveal &rarr;</span>
+                </div>
+                <div class="flip-card-back">
+                  <span class="flip-card-eyebrow">A small example</span>
+                  <p class="flip-card-body">[2-3 sentence story.]</p>
+                </div>
+              </div>
+            </label>
+            <label class="flip-card">
+              <input type="checkbox">
+              <div class="flip-card-inner">
+                <div class="flip-card-front">
+                  <span class="flip-card-num">03 &nbsp;&middot;&nbsp; The new contract</span>
+                  <h3 class="flip-card-title">[The design move - one short sentence.]</h3>
+                  <span class="flip-card-hint">Tap to reveal &rarr;</span>
+                </div>
+                <div class="flip-card-back">
+                  <span class="flip-card-eyebrow">The design mindset</span>
+                  <p class="flip-card-body">[2-3 sentence expansion of the new posture.]</p>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+        <aside class="notes">[Speaker notes.]</aside>
+      </section>
+
+      <section class="slide dj-slide" data-screen-label="04 Implication">
+        <div class="slide-content">
+          <div class="section-label"><span class="number">03</span><span class="slash">/</span><span>Implication 1</span></div>
+          <h1 class="content-title">[Implication title].</h1>
+          <p class="lead" style="line-height: 1.5; margin-bottom: 14px;">[One-line subtitle - the why.]</p>
+          <p class="card-instruction">Click each card to flip.</p>
+          <div class="flip-row" style="grid-template-columns: 1fr 1fr;">
+            <label class="flip-card">
+              <input type="checkbox">
+              <div class="flip-card-inner">
+                <div class="flip-card-front">
+                  <span class="flip-card-num">01 &nbsp;&middot;&nbsp; The concept</span>
+                  <h3 class="flip-card-title">[Concept - one short sentence.]</h3>
+                  <span class="flip-card-hint">Tap to reveal &rarr;</span>
+                </div>
+                <div class="flip-card-back">
+                  <span class="flip-card-eyebrow">How it works</span>
+                  <p class="flip-card-body">[3-4 sentence expansion of the concept.]</p>
+                </div>
+              </div>
+            </label>
+            <label class="flip-card">
+              <input type="checkbox">
+              <div class="flip-card-inner">
+                <div class="flip-card-front">
+                  <span class="flip-card-num">02 &nbsp;&middot;&nbsp; Design case</span>
+                  <h3 class="flip-card-title">[Example - one short sentence.]</h3>
+                  <span class="flip-card-hint">Tap to reveal &rarr;</span>
+                </div>
+                <div class="flip-card-back">
+                  <span class="flip-card-eyebrow">A small example</span>
+                  <p class="flip-card-body">[3-4 sentence story showing the concept in a real product.]</p>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+        <aside class="notes">[Speaker notes.]</aside>
+      </section>
+
+      <section class="slide dj-slide center-slide" data-screen-label="05 Closing">
+        <div class="pf-grid"></div>
+        <div class="slide-content">
+          <h1 class="cover-title">Thank you.</h1>
+          <h2 class="cover-subtitle">Questions welcome.<span class="cursor"></span></h2>
+          <div class="reading-callout">
+            <div class="reading-callout-label">Further reading</div>
+            <a href="[URL]" target="_blank" rel="noopener noreferrer">[Article title] &rarr;</a>
+          </div>
+        </div>
+        <aside class="notes">[Closing notes.]</aside>
+      </section>
+    </div>
+  </div>
+
+  <nav class="deck-counter" role="navigation" aria-label="Deck navigation">
+    <button type="button" id="deck-prev" aria-label="Previous slide">&lsaquo;</button>
+    <span class="deck-count"><span id="deck-cur">01</span> <span class="total">/ <span id="deck-total">01</span></span></span>
+    <button type="button" id="deck-next" aria-label="Next slide">&rsaquo;</button>
+  </nav>
+  <div class="deck-hint">&larr; / &rarr; &middot; space</div>
+
+  <script>
+    (function () {
+      var stage = document.getElementById('deck-stage');
+      var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+      var prev = document.getElementById('deck-prev');
+      var next = document.getElementById('deck-next');
+      var cur = document.getElementById('deck-cur');
+      var total = document.getElementById('deck-total');
+      var STORE = 'deck:idx:' + (location.pathname || '/');
+      var idx = 0;
+
+      function fit() {
+        var sw = window.innerWidth;
+        var sh = window.innerHeight;
+        var pad = 32;
+        var scale = Math.min((sw - pad) / 1920, (sh - pad) / 1080);
+        if (!isFinite(scale) || scale <= 0) scale = 1;
+        var tx = (sw - 1920 * scale) / 2;
+        var ty = (sh - 1080 * scale) / 2;
+        stage.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+      }
+
+      function pad2(n) { return (n < 10 ? '0' : '') + n; }
+      function paint() {
+        slides.forEach(function (el, i) { el.classList.toggle('active', i === idx); });
+        if (cur) cur.textContent = pad2(idx + 1);
+        if (total) total.textContent = pad2(slides.length);
+        if (prev) prev.toggleAttribute('disabled', idx <= 0);
+        if (next) next.toggleAttribute('disabled', idx >= slides.length - 1);
+      }
+      function go(i) {
+        idx = Math.max(0, Math.min(slides.length - 1, i));
+        paint();
+        try { localStorage.setItem(STORE, String(idx)); } catch (_) {}
+      }
+      function onKey(e) {
+        var target = e.target;
+        if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+        if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); go(idx + 1); }
+        else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(idx - 1); }
+        else if (e.key === 'Home') { e.preventDefault(); go(0); }
+        else if (e.key === 'End') { e.preventDefault(); go(slides.length - 1); }
+      }
+
+      window.addEventListener('keydown', onKey, true);
+      document.addEventListener('keydown', onKey, true);
+      if (prev) prev.addEventListener('click', function () { go(idx - 1); });
+      if (next) next.addEventListener('click', function () { go(idx + 1); });
+
+      document.body.setAttribute('tabindex', '-1');
+      document.body.style.outline = 'none';
+      function focusDeck() { try { window.focus(); document.body.focus({ preventScroll: true }); } catch (_) {} }
+      document.addEventListener('mousedown', focusDeck);
+      window.addEventListener('load', focusDeck);
+
+      try {
+        var saved = parseInt(localStorage.getItem(STORE) || '0', 10);
+        if (!isNaN(saved) && saved >= 0 && saved < slides.length) idx = saved;
+      } catch (_) {}
+
+      window.addEventListener('resize', fit);
+      fit();
+      paint();
+      focusDeck();
+    })();
+  </script>
+</body>
+</html>

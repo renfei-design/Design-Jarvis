@@ -1,171 +1,113 @@
 # Design Jarvis
 
-A multi-agent AI design team for VS Code — composable specialists that collaborate through an orchestrator, extensible with drop-in agents and skills.
+Design Jarvis is an open-source, vendor-neutral AI design team for product and UX work. It combines specialist agents, reusable design skills, project memory, optional Figma integration, and a scenario-based evaluation harness.
 
-## Why Multi-Agent?
+The core system is plain Markdown, JSON, and JavaScript. Teams can adopt the whole workflow or reuse individual agents and skills in any compatible agent runtime.
 
-A single AI assistant handles every request the same way. A multi-agent framework splits design work across **specialists that each excel at one thing** — then coordinates them through an orchestrator that knows who to call and when.
+## What it provides
 
-This matters for design work because:
+- **Six agents:** an orchestrator plus Design Lead, Product Designer, UX Researcher, Front-End Engineer, and Design Ops specialists.
+- **Reusable skills:** accessibility review, content review, competitive research, high-fidelity design, implementation, handoff specifications, design-system governance, and project memory.
+- **Project workspaces:** artifacts live under `projects/<slug>/`; durable context lives under `.jarvis/memory/projects/<slug>/`.
+- **Optional Figma integration:** inspect designs, create or update frames, capture prototypes, and connect components to code.
+- **Quality gates:** deterministic checks and realistic scenarios verify routing, tool discipline, artifact placement, and completion evidence.
+- **Open design-system model:** use the design system already present in a project, configure your own, or start with the neutral tokens in `projects/_starters/design-tokens.css`.
 
-- **Deeper expertise** — Each agent carries domain-specific instructions, constraints, and skills. A UX Designer thinks in flows and hierarchy; a Content Designer thinks in terminology systems and voice. A single agent can't hold all of that context effectively.
-- **Composable workflows** — Agents hand off to each other. Ask for a "landing page" and the orchestrator can route wireframing to UX Designer, visual polish to UI Designer, and copy review to Content Designer — each using the right skill for the job.
-- **Persistent memory** — A dedicated Design Ops agent manages a three-tier memory system, so decisions, context, and session history survive across conversations without polluting other agents' context windows.
-- **Quality gates** — The Design Lead agent provides critique and review as a separate step, not an afterthought bolted onto the generator.
+## Principles
 
-## Quick Start
-
-```bash
-git clone https://github.com/renfei-design/design-jarvis
-code design-jarvis
-```
-
-Open VS Code Copilot Chat → **@Design Jarvis**. It routes your request to the right specialist automatically.
-
-Customize project settings anytime in `jarvis.config.yaml` (brand color, font, spacing, content style guide, Figma library keys).
+1. **Vendor neutral.** No product, cloud, analytics platform, design system, or private knowledge service is assumed.
+2. **Project context first.** Agents inspect the current product, code, design system, and prior decisions before proposing work.
+3. **Artifacts over chat.** Specs, prototypes, diagrams, and decisions are saved in predictable project folders.
+4. **Accessible by default.** WCAG 2.2 AA is the minimum quality target.
+5. **Evidence before completion.** Design writes return node IDs and screenshots; code changes run builds and tests; research cites sources.
+6. **Human judgment remains essential.** Generated work is a strong starting point, not a substitute for product context, user research, or craft review.
 
 ## Architecture
 
-The framework has four layers: **agents**, **skills**, **memory**, and **config**.
-
+```mermaid
+flowchart TD
+    U[Designer or product team] --> O[Design Jarvis orchestrator]
+    O --> L[Design Lead]
+    O --> D[Product Designer]
+    O --> R[UX Researcher]
+    O --> E[Front-End Engineer]
+    O --> P[Design Ops]
+    L --> S[Reusable skills]
+    D --> S
+    R --> S
+    E --> S
+    P --> S
+    S --> F[Optional Figma tools]
+    S --> C[Local files and code]
+    S --> M[Project memory]
+    S --> A[Project artifacts]
+    O --> V[Evaluation harness]
 ```
-Orchestrator (Design Jarvis)
-  ├── routes tasks to specialist agents
-  ├── agents invoke skills for domain knowledge
-  ├── Design Ops manages persistent memory
-  └── config drives tokens, style, and tool adapters
+
+## Repository layout
+
+```text
+.github/agents/      Agent definitions and shared operating context
+.github/skills/      Reusable task playbooks
+.github/prompts/     Prompt shortcuts
+.jarvis/memory/      Local project memory (ignored except templates)
+projects/<slug>/     Project specs, prototypes, research, diagrams, and assets
+projects/_starters/  Read-only, vendor-neutral starter templates
+evals/               Scenario-based evaluation and loop engine
+extensions/          Optional editor integration
+scripts/             Repository checks and utilities
 ```
 
-### Agents — The Team
+## Quick start
 
-Agents live in `.github/agents/` — VS Code Copilot discovers them automatically.
+1. Clone or fork the repository: `git clone https://github.com/renfei-design/Design-Jarvis.git`.
+2. Open it in an agent-capable development environment.
+3. Select the Design Jarvis orchestrator, or copy the agent and skill files into your preferred runtime.
+4. Optionally connect Figma using `.vscode/mcp.json`.
+5. Start with a concrete request, for example:
 
-| Agent | Role | Why It's Separate |
-|-------|------|-------------------|
-| **Design Jarvis** | Orchestrator | Routing logic stays clean; specialists stay focused |
-| **Design Lead** | Direction & critique | Review is a distinct cognitive mode from creation |
-| **UX Designer** | Wireframes, flows, IA | Low-fi thinking shouldn't be polluted by visual polish |
-| **UI Designer** | Hi-fi screens, visual design | Pixel-level work needs different constraints than IA |
-| **UX Researcher** | Competitive analysis, research | Evidence-gathering is a separate workflow |
-| **Content Designer** | UI text, terminology, voice | Language work needs its own style rules and context |
-| **Design Ops** | Memory, decisions, sessions | Memory management requires its own persistence logic |
+```text
+Create a UX brief for this product requirement, then propose the primary flow.
+```
 
-### Skills — Domain Knowledge
+```text
+Review this interface for hierarchy, accessibility, content clarity, and design-system fit.
+```
 
-Skills live in `.skills/`. Each is a self-contained `SKILL.md` file that an agent loads on demand — keeping agent definitions lightweight while giving them deep domain expertise when needed.
+```text
+Build a working prototype under projects/account-settings/prototypes/ and verify its key states.
+```
 
-| Skill | Agent | What It Provides |
-|-------|-------|-----------------|
-| wireframe | UX Designer | Low-fi screen generation workflow |
-| hifi-design | UI Designer | Hi-fi visual design workflow |
-| competitive-ux | UX Researcher | Competitive analysis report structure |
-| content-review | Content Designer | UI text review against style guides |
-| design-checklist | Design Ops | Design process tracking |
-| memory | Design Ops | Three-tier persistent memory management |
+## Design-system configuration
 
-### Memory — Cross-Session Persistence
+Design Jarvis discovers design-system context in this order:
 
-The memory system (`.jarvis/memory/`) gives agents continuity across conversations:
+1. User-provided design-system documentation or Figma library.
+2. Tokens and components in the current project.
+3. Project memory and prior decisions.
+4. Neutral starter tokens in `projects/_starters/design-tokens.css`.
 
-| Tier | Contents | Loaded |
-|------|----------|--------|
-| **Hot** | Project context, active decisions, last session summary | Automatically |
-| **Warm** | Past session archives | On demand |
-| **Cold** | Auto-generated activity logs | Reference only |
+No proprietary component library, font, color, or platform pattern is required.
 
-Design Ops manages all reads and writes. Other agents never touch memory files directly — this prevents conflicts and keeps the memory schema consistent.
+## Verification
 
-## Extensibility
-
-The framework is designed to grow. Every component — agents, skills, config — is a plain file you can add, remove, or modify.
-
-### Add an Agent
-
-1. Create a `.agent.md` file in `.github/agents/`
-2. Define the agent's role, instructions, and which skills it uses
-3. Update the orchestrator to route to it
-
-Two ready-made agents ship in `extras/agents/`:
-
-| Agent | Purpose |
-|-------|---------|
-| **Design Reviewer** | Unified a11y + content + token compliance review |
-| **Design Technologist** | HTML/CSS/JS code prototypes and interactive demos |
+Run the local deterministic checks:
 
 ```bash
-cp extras/agents/design-reviewer.agent.md .github/agents/
+node evals/health-check.mjs
+node evals/check-links.mjs
+node --test 'evals/tests/*.test.mjs'
+npm --prefix extensions/design-jarvis-pack run check
 ```
 
-### Add a Skill
+The end-to-end harness in `evals/README.md` grades realistic agent sessions. It evaluates behavior and evidence; it does not guarantee product correctness or final design quality.
 
-1. Create a directory in `.skills/` with a `SKILL.md` file
-2. Reference it from an agent's definition
+## Contributing
 
-Three ready-made skills ship in `extras/skills/`:
+Contributions should remain vendor-neutral, cite public sources when introducing guidance, keep project artifacts out of shared starters, and include proportional verification. See [CONTRIBUTING.md](CONTRIBUTING.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and `.github/PULL_REQUEST_TEMPLATE.md`.
 
-| Skill | Purpose |
-|-------|---------|
-| **a11y-audit** | WCAG 2.2 AA accessibility audit |
-| **canvas-read** | Read and understand the current Figma canvas |
-| **online-research** | Web research with speed-optimized fetch |
-
-```bash
-cp -r extras/skills/a11y-audit .skills/
-```
-
-Skills are automatically discovered — no registration step required.
-
-### Customize Config
-
-`jarvis.config.yaml` controls project-level settings without touching agent or skill definitions:
-
-```yaml
-project:
-  name: "My Product"
-
-designSystem:
-  tokens:
-    brandColor: "#0078D4"
-    fontFamily: "Inter"
-    spacingUnit: 4
-
-contentStyle: "google"   # or "microsoft" | "apple" | "custom"
-
-agents:
-  qualityGate: "Design Lead"
-  required: ["Design Jarvis", "Design Lead", "Design Ops"]
-```
-
-### Build Your Own
-
-The patterns here aren't design-specific. The same architecture — **orchestrator → specialists → skills → memory** — works for any domain where tasks benefit from role separation:
-
-- **Engineering team**: Architect, Frontend Dev, Backend Dev, QA, DevOps
-- **Content team**: Strategist, Writer, Editor, SEO Specialist
-- **Research team**: Lead, Quant Analyst, Qual Researcher, Synthesizer
-
-The key principles:
-1. **One agent, one role** — keep context windows focused
-2. **Skills as loadable knowledge** — agents stay lightweight, skills provide depth
-3. **Memory as a service** — one agent owns persistence, others stay stateless
-4. **Config over code** — project settings live in YAML, not buried in prompts
-
-### Figma Integration (Optional)
-
-If you use Figma, configure the MCP server in `.vscode/mcp.json` and run the [Figma MCP](https://www.figma.com/community/plugin/1501516954498498498/figma-mcp-by-figma) plugin. Agents work without Figma for non-visual tasks — they'll produce HTML prototypes or text descriptions instead.
-
-## File Structure
-
-```
-.github/agents/              Agent definitions (auto-discovered by VS Code)
-.skills/                     Skill definitions (loaded on demand by agents)
-.jarvis/memory/              Persistent project memory (managed by Design Ops)
-.vscode/                     Editor config and MCP server setup
-extras/                      Optional agents & skills (copy to activate)
-copilot-instructions.md      Shared context for all agents
-jarvis.config.yaml           Project configuration
-```
+Security reports should follow [SECURITY.md](SECURITY.md). Support and governance are described in [SUPPORT.md](SUPPORT.md) and [GOVERNANCE.md](GOVERNANCE.md). Redistributed material is documented in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## License
 
-MIT
+MIT. See `LICENSE`.

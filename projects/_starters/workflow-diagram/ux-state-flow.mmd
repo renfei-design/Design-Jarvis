@@ -1,0 +1,17 @@
+%% Title: UX state flow
+%% Purpose: Show UI states and transitions for a screen or component.
+%% Assumptions:
+%% - Default state is reachable after initial load succeeds.
+%% Open questions:
+%% - Confirm permission and partial-data states.
+stateDiagram-v2
+    [*] --> Loading
+    Loading --> Empty: no items
+    Loading --> Default: items found
+    Loading --> Error: request fails
+    Empty --> Create: user starts setup
+    Create --> Default: item created
+    Default --> Refreshing: user refreshes
+    Refreshing --> Default: success
+    Refreshing --> Error: failure
+    Error --> Loading: retry

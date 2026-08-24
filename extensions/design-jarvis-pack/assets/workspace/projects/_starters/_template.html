@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Product prototype</title>
+  <link rel="stylesheet" href="./design-tokens.css">
+  <style>
+    body { min-height: 100vh; }
+    .app { min-height: 100vh; display: grid; grid-template-rows: auto 1fr; }
+    .header {
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      padding: var(--space-3) var(--space-6);
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-surface-raised);
+    }
+    .brand { font-size: var(--font-size-md); font-weight: 700; }
+    .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); min-height: 0; }
+    .nav { padding: var(--space-4); border-right: 1px solid var(--color-border); background: var(--color-surface); }
+    .nav a { display: block; padding: var(--space-2) var(--space-3); border-radius: var(--radius-control); color: inherit; text-decoration: none; }
+    .nav a[aria-current="page"] { background: var(--color-accent); color: var(--color-accent-text); }
+    .main { padding: var(--space-8); overflow: auto; }
+    .content { max-width: 960px; }
+    .card { padding: var(--space-6); }
+    .button { border: 0; border-radius: var(--radius-control); padding: var(--space-2) var(--space-4); background: var(--color-accent); color: var(--color-accent-text); cursor: pointer; }
+    .button:hover { background: var(--color-accent-hover); }
+    @media (max-width: 760px) {
+      .layout { grid-template-columns: 1fr; }
+      .nav { border-right: 0; border-bottom: 1px solid var(--color-border); }
+      .main { padding: var(--space-5); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <span class="brand">Product name</span>
+      <button class="button" type="button">Primary action</button>
+    </header>
+    <div class="layout">
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="#" aria-current="page">Overview</a>
+        <a href="#">Activity</a>
+        <a href="#">Settings</a>
+      </nav>
+      <main class="main" id="main-content">
+        <div class="content">
+          <h1>Page title</h1>
+          <p>Describe the user’s goal and the most useful next action.</p>
+          <section class="surface card" aria-labelledby="section-title">
+            <h2 id="section-title">Content section</h2>
+            <p>Replace this sample with realistic, privacy-safe product content.</p>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

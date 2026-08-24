@@ -1,0 +1,26 @@
+%% Title: Agent orchestration flow
+%% Purpose: Show how a user request moves through Design Jarvis roles.
+%% Assumptions:
+%% - Design Lead reviews user-visible artifacts.
+%% Open questions:
+%% - Confirm whether memory update is needed at the end.
+flowchart TD
+    User([Designer asks]) --> Orchestrator[Design Jarvis routes]
+    Orchestrator --> Specialist{Which specialist?}
+    Specialist -- Research --> UX[UX Researcher]
+    Specialist -- Design --> Designer[Designer]
+    Specialist -- Code --> FE[Front-End Engineer]
+    Specialist -- Memory --> Ops[Design Ops]
+    UX --> Review{User-visible artifact?}
+    Designer --> Review
+    FE --> Review
+    Review -- Yes --> Lead[Design Lead review]
+    Review -- No --> Output[Return result]
+    Lead --> Approved{Approved?}
+    Approved -- Yes --> Output
+    Approved -- No --> Iterate[Iterate with fix list]
+    Iterate --> Lead
+    Output --> Memory{Save decision?}
+    Memory -- Yes --> Ops
+    Memory -- No --> Done([Done])
+    Ops --> Done

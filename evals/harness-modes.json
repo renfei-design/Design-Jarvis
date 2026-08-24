@@ -1,0 +1,51 @@
+{
+  "research": {
+    "description": "Read-only research and synthesis. No canvas or repository writes.",
+    "denyToolPatterns": [
+      "figma-use_figma",
+      "generate_figma_design",
+      "apply_patch",
+      "create_or_update",
+      "delete_file"
+    ]
+  },
+  "design-review": {
+    "description": "Read-only Figma/code review. Screenshots and metadata are allowed; writes are not.",
+    "denyToolPatterns": [
+      "figma-use_figma",
+      "generate_figma_design",
+      "apply_patch",
+      "create_or_update",
+      "delete_file"
+    ]
+  },
+  "figma-write": {
+    "description": "Figma authoring mode. Figma writes are allowed and should be preceded by figma-use when use_figma is used.",
+    "denyToolPatterns": [
+      "delete_file"
+    ],
+    "requireAnyToolPatterns": [
+      "figma-use_figma",
+      "generate_figma_design"
+    ]
+  },
+  "prototype-build": {
+    "description": "Code prototype mode. File edits, commands, screenshots, and prototype capture are expected.",
+    "requireAnyToolPatterns": [
+      "bash",
+      "runInTerminal",
+      "generate_figma_design",
+      "figma-generate_figma_design"
+    ]
+  },
+  "memory-maintenance": {
+    "description": "Memory write mode. Canonical Core + Archive files should be updated and validated.",
+    "requireTranscriptPatterns": [
+      "memory\\.md|manifest\\.json|decisions\\.md|artifacts\\.json"
+    ]
+  },
+  "spec": {
+    "description": "Specification generation mode. Repository/spec writes are allowed; Figma writes are optional.",
+    "denyToolPatterns": []
+  }
+}

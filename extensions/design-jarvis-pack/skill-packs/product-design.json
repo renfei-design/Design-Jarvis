@@ -1,0 +1,29 @@
+{
+  "name": "product-design",
+  "displayName": "Product Design",
+  "version": "0.1.0",
+  "owner": "Design Jarvis contributors",
+  "status": "built-in",
+  "description": "Cross-industry workflows for briefs, specifications, research, content, accessibility, high-fidelity design, and implementation.",
+  "skills": [
+    "a11y-review",
+    "competitive-intel",
+    "content-review",
+    "data-explore",
+    "extract-content-strings",
+    "generate-ux-handoffspec",
+    "hifi-design",
+    "implement-design",
+    "ux-brief"
+  ],
+  "designSystems": [],
+  "requires": [],
+  "permissions": [
+    "read-local-context",
+    "read-public-web",
+    "write-local-artifacts",
+    "optional-read-figma",
+    "optional-write-figma"
+  ],
+  "safety": "uses public or user-authorized evidence and verifies artifact writes"
+}

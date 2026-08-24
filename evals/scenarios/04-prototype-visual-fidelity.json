@@ -1,0 +1,37 @@
+{
+  "id": "04-prototype-visual-fidelity",
+  "title": "Project-stack prototype with visual fidelity check",
+  "category": "prototype",
+  "harness_mode": "prototype-build",
+  "prompt": "Take the approved hi-fi screen on the canvas and build a prototype in the current project stack. Make sure the running prototype actually matches the Figma source — don't just say 'it's done' if the columns are overflowing.",
+  "expected_specialists": ["Front-End Engineer", "Design Lead"],
+  "expected_artifacts": ["project-prototype-folder", "running-dev-server"],
+  "success_criteria": [
+    "Front-End Engineer uses the current project framework and component library, or the neutral app foundation when no stack exists.",
+    "All design values come from project design tokens or documented neutral CSS custom properties, not unexplained literals.",
+    "Front-End Engineer starts the dev server AND captures a screenshot of the rendered output.",
+    "Design Lead visually compares the prototype screenshot against the Figma source (not code-only review).",
+    "Any visual delta (column overflow, dialog sizing, badge style, mock data mismatch) is flagged with a specific fix, not glossed over.",
+    "Final verdict is 'Production Ready' only if visual fidelity is verified."
+  ],
+  "deterministic_validators": [
+    {
+      "type": "tool_input_contains",
+      "pattern": "projects/.*/prototypes|src/features|app-foundation|package.json",
+      "description": "Tool inputs show work targeting a project prototype or existing feature structure."
+    },
+    {
+      "type": "command_succeeded",
+      "commandPattern": "npm|dev|test|build|server",
+      "description": "A build/test/dev-server command succeeded."
+    },
+    {
+      "type": "tool_invoked",
+      "toolPattern": "generate_figma_design|figma-generate_figma_design|get_screenshot|figma-get_screenshot",
+      "description": "Prototype run is captured or compared visually."
+    }
+  ],
+  "max_tool_calls": 80,
+  "max_tokens": 400000,
+  "notes": "Tests the strongest claim in design-lead.agent.md — the visual-diff requirement that exists specifically to catch the column-overflow class of bugs."
+}

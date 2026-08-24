@@ -1,13 +1,75 @@
 node_modules/
-dist/
-*.tsbuildinfo
-.env
-.env.local
-.DS_Store
+*.bak
 *.log
-coverage/
+.DS_Store
+.claude/
+dashboard/dist/
+.vite/
 
-# Memory: keep hot files tracked, ignore transient data
-.jarvis/memory/cold/
-.jarvis/memory/warm/sessions/*.md
-!.jarvis/memory/warm/sessions/.gitkeep
+# Common local tooling caches and coverage output.
+coverage/
+.nyc_output/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+__pycache__/
+*.py[cod]
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Personal agent customizations are local-only.
+.github/skills-personal/
+.github/agents-personal/
+.github/prompts-personal/
+skills-personal/
+agents-personal/
+prompts-personal/
+
+# Generated artifacts
+dashboard/public/jarvis-map-data.json
+
+# Local/private eval artifacts. Keep the reusable eval harness tracked.
+evals/results/
+evals/artifacts/
+evals/runs/
+evals/tmp/
+evals/local/
+evals/*.local.*
+
+# Loop (JIL) run artifacts are per-invocation working state. Keep the engine + README.
+evals/loop/runs/*
+!evals/loop/runs/README.md
+
+# Project deliverables are local by default. Keep shared starters tracked.
+projects/*
+!projects/_starters/
+!projects/_starters/**
+projects/_starters/**/node_modules/
+projects/_starters/**/dist/
+
+# Persistent Design Jarvis memory is local by default.
+.jarvis/memory/*
+.jarvis/memory/session/
+!.jarvis/memory/projects/
+.jarvis/memory/projects/*
+!.jarvis/memory/projects/.gitkeep
+!.jarvis/memory/library-cache/
+.jarvis/memory/library-cache/*
+!.jarvis/memory/library-cache/.gitkeep
+# Loop run artifacts (written to workspace .jarvis/loop-runs via --repo-root).
+.jarvis/loop-runs/
+# Local project registry is per-user state, not shared repo content.
+.jarvis/projects.json
+.env
+
+# Local reference checkouts are not part of the public distribution.
+external/
+
+# Packaged VS Code extensions
+*.vsix
+extensions/design-jarvis-pack/assets/create-runtime.tgz
+
+# Packaged installer bundles
+*.zip

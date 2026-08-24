@@ -1,0 +1,10 @@
+.git/**
+node_modules/**
+*.vsix
+scripts/**
+test/**
+assets/**/*.bak
+assets/**/*.backup
+README-dev.md
+*.command
+*.zip

@@ -1,0 +1,37 @@
+{
+  "id": "03-hifi-from-wireframe",
+  "title": "Hi-fi screen from approved wireframe",
+  "category": "hifi",
+  "harness_mode": "figma-write",
+  "prompt": "We have an approved wireframe for the project explorer empty state on the canvas. Build a hi-fi version using the active project design system. Then run the standard quality gate.",
+  "expected_specialists": ["Designer", "Design Lead"],
+  "expected_artifacts": ["hifi-frame-in-figma"],
+  "success_criteria": [
+    "Hi-fi frame uses components from the active project library rather than detached or improvised lookalikes.",
+    "All colors are bound to the active project tokens; neutral fallback tokens are explicitly identified when no system exists.",
+    "Empty state, loading, and populated states are addressed (or absence is explicitly justified).",
+    "Designer runs a11y-review, content-review, and design-system token audits in parallel as a quality gate (loaded as skills, not separate agents).",
+    "Design Lead synthesizes audit findings into a final verdict before user delivery.",
+    "If any audit issue is blocking, it is re-delegated to the originating specialist for fix, not silently ignored."
+  ],
+  "deterministic_validators": [
+    {
+      "type": "tool_invoked",
+      "toolPattern": "figma-use_figma|generate_figma_design",
+      "description": "Hi-fi build uses a Figma write/capture tool."
+    },
+    {
+      "type": "figma_created_node_ids",
+      "description": "Figma write output includes created node ID evidence."
+    },
+    {
+      "type": "transcript_contains",
+      "pattern": "a11y-review|a11y|accessibility|content-review|design-system|token",
+      "flags": "i",
+      "description": "Quality gate evidence appears in the transcript."
+    }
+  ],
+  "max_tool_calls": 60,
+  "max_tokens": 350000,
+  "notes": "Tests full review loop including parallel quality gate and Design Lead synthesis."
+}

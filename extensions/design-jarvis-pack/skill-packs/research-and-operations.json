@@ -1,0 +1,22 @@
+{
+  "name": "research-and-operations",
+  "displayName": "Research and Operations",
+  "version": "0.1.0",
+  "owner": "Design Jarvis contributors",
+  "status": "built-in",
+  "description": "Tracker-neutral issue writing, feedback synthesis, content design, knowledge search, and evidence workflows.",
+  "skills": [
+    "bugfiler",
+    "feedbackfinder",
+    "kb-search",
+    "stringweaver"
+  ],
+  "designSystems": [],
+  "requires": [],
+  "permissions": [
+    "read-local-context",
+    "read-public-web",
+    "write-local-artifacts"
+  ],
+  "safety": "uses only public or user-authorized sources and keeps sensitive data out of artifacts"
+}

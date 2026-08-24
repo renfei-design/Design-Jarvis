@@ -1,0 +1,19 @@
+{
+  "id": "09-iteration-on-feedback",
+  "title": "Iterate on a hi-fi screen given Design Lead feedback",
+  "category": "hifi",
+  "harness_mode": "figma-write",
+  "prompt": "Design Lead reviewed the hi-fi on the canvas and said: '1. Primary CTA lacks visual weight — promote to filled accent style. 2. Spacing between form sections is inconsistent — use 24px gap. 3. Missing empty state.' Apply these fixes.",
+  "expected_specialists": ["Designer", "Design Lead"],
+  "expected_artifacts": ["updated-hifi-frame"],
+  "success_criteria": [
+    "Designer addresses each of the 3 numbered fixes specifically — none skipped.",
+    "After fixes, Design Lead re-reviews and emits an updated verdict (Round 2 of 3).",
+    "If verdict is 'Production Ready', the artifact is presented to user with what changed.",
+    "If still 'Needs Iteration', a third round runs (or escalates to user with caveats after round 3).",
+    "No scope expansion — the agent does not 'also fix' unrelated issues without asking."
+  ],
+  "max_tool_calls": 35,
+  "max_tokens": 180000,
+  "notes": "Tests review-loop iteration discipline and round counting."
+}

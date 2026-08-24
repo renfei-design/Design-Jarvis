@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "description": "Goal-profile registry for the Jarvis Improvement Loop. The loop is goal-agnostic: only three things vary per goal — where ground-truth lives (discover), what the gate is (verify), and what 'done/plateau' means. Everything else (the 6-phase contract + 4 policies) is shared. Classification is a hint; when confidence is low the loop asks one clarifying question (late commitment).",
+  "profiles": {
+    "self-improve": {
+      "id": "self-improve",
+      "intent": "Improve the Design Jarvis agent system itself (skills, agents, starters, scenarios, memory schema).",
+      "classify_signals": ["improve jarvis", "fix the skill", "agent keeps", "eval", "scenario", "regression", "baseline", "harness", "self-improve"],
+      "harness_mode": "spec",
+      "discover_sources": [
+        "evals/results/<date>/*.json",
+        "evals/results/baseline-*.json",
+        "evals/skill-candidates/<date>/*.json",
+        "node evals/health-check.mjs output",
+        ".jarvis/memory/loop/ (prior plateau + next-direction)"
+      ],
+      "ground_sources_repo": [
+        "evals/scenarios/*.json (success_criteria)",
+        "evals/harness-modes.json",
+        "evals/results/baseline-*.json (immutable comparison points)"
+      ],
+      "gate": {
+        "kind": "eval",
+        "must_pass": ["node evals/health-check.mjs exits 0"],
+        "regression_guard": "Affected scenario harness_score must not drop >2pp and tokens must not rise >25% vs baseline."
+      },
+      "plateau_when": "No scenario is below baseline and no candidate produces a measurable score gain.",
+      "default_autonomy": "propose-only",
+      "denied_without_approval": ["apply edit to main", "edit baseline-*.json"]
+    },
+    "design-task": {
+      "id": "design-task",
+      "intent": "Produce a design artifact — hi-fi screen, wireframe, design-system update, content/a11y fix — via a Design Jarvis skill.",
+      "classify_signals": ["design", "hi-fi", "wireframe", "screen", "figma", "component", "token", "content review", "a11y", "accessibility", "mockup"],
+      "harness_mode": "figma-write",
+      "discover_sources": [
+        "the relevant SKILL.md acceptance steps",
+        "projects/<slug>/specs/",
+        "search_design_system / get_metadata / get_screenshot on the target frame"
+      ],
+      "ground_sources_repo": [
+        ".github/skills/<skill>/SKILL.md (acceptance criteria)",
+        "projects/<slug>/specs/*",
+        "AGENTS.md vendor-neutral design-system discovery policy"
+      ],
+      "ground_sources_web_allowlist": ["w3.org", "design-tokens.github.io", "developer.mozilla.org"],
+      "gate": {
+        "kind": "artifact",
+        "must_pass": [
+          "use_figma writes returned created node IDs",
+          "screenshot matches stated intent (all required elements present)",
+          "design-system components used; no raw hex outside tokens"
+        ]
+      },
+      "plateau_when": "The artifact meets every acceptance criterion in the skill and the spec.",
+      "default_autonomy": "sandbox-autonomous",
+      "denied_without_approval": ["write to a real non-sandbox Figma file"]
+    },
+    "research": {
+      "id": "research",
+      "intent": "Answer a research question with cited, synthesized evidence (competitive intel, feedback, KB).",
+      "classify_signals": ["research", "competitive", "how does", "compare", "benchmark", "feedback", "pain points", "what do we know"],
+      "harness_mode": "research",
+      "discover_sources": [
+        "project memory and user-authorized research",
+        "trusted public sources via web fetch"
+      ],
+      "ground_sources_repo": [
+        "evals/judges/design-lead-judge.md (research criteria)",
+        ".github/skills/competitive-intel/SKILL.md",
+        ".github/skills/kb-search/SKILL.md"
+      ],
+      "ground_sources_web_allowlist": ["w3.org", "nngroup.com", "developer.mozilla.org"],
+      "gate": {
+        "kind": "evidence",
+        "must_pass": [
+          "3+ independent real sources (resolvable URLs)",
+          "concrete patterns extracted, not vague summaries",
+          "synthesis answers the actual question"
+        ]
+      },
+      "plateau_when": "The question is answered with cited evidence and further searches are diminishing returns.",
+      "default_autonomy": "read-only",
+      "denied_without_approval": ["any figma/repo write"]
+    },
+    "prototype": {
+      "id": "prototype",
+      "intent": "Build or refine a working code prototype that matches a design.",
+      "classify_signals": ["prototype", "build", "implement", "code this", "html", "component", "interaction"],
+      "harness_mode": "prototype-build",
+      "discover_sources": [
+        "projects/_starters/ foundation code",
+        "the target design (screenshot / get_design_context)",
+        "build + console output"
+      ],
+      "ground_sources_repo": [
+        ".github/skills/implement-design/SKILL.md",
+        "projects/_starters/design-tokens.css",
+        "the source Figma frame or spec"
+      ],
+      "gate": {
+        "kind": "build",
+        "must_pass": [
+          "build/dev command runs with no errors",
+          "visual capture matches the target design",
+          "no console errors"
+        ]
+      },
+      "plateau_when": "The prototype matches the target design and runs cleanly.",
+      "default_autonomy": "sandbox-autonomous",
+      "denied_without_approval": ["write outside projects/<slug>/", "push"]
+    },
+    "memory": {
+      "id": "memory",
+      "intent": "Record or reconcile project memory / design-ops state.",
+      "classify_signals": ["memory", "log decision", "session summary", "remember", "project state", "checklist"],
+      "harness_mode": "memory-maintenance",
+      "discover_sources": [".jarvis/memory/projects/<slug>/ (Core + Archive)"],
+      "ground_sources_repo": [".github/skills/memory/SKILL.md (Core+Archive schema)"],
+      "gate": {
+        "kind": "schema",
+        "must_pass": ["Core+Archive files valid against the memory schema", "state internally consistent"]
+      },
+      "plateau_when": "State is recorded and consistent with the schema.",
+      "default_autonomy": "propose-only",
+      "denied_without_approval": []
+    },
+    "fuzzy": {
+      "id": "fuzzy",
+      "intent": "Fallback for goals with no natural gate (e.g. 'make it more premium'). Requires an explicit Ground step that derives sourced, checkable criteria before any work.",
+      "classify_signals": ["better", "premium", "polished", "nicer", "cleaner", "more modern"],
+      "harness_mode": "design-review",
+      "discover_sources": ["grep/inspect the target artifact"],
+      "ground_sources_repo": ["AGENTS.md design-system policy", "projects/_starters/design-tokens.css", "relevant SKILL.md"],
+      "ground_sources_web_allowlist": ["w3.org", "nngroup.com", "developer.mozilla.org"],
+      "gate": {
+        "kind": "derived",
+        "rule": "Convert the fuzzy goal into 3+ sourced, machine-checkable criteria during Ground. If a criterion cannot be sourced, escalate to the user — never fake a gate."
+      },
+      "plateau_when": "All derived, sourced criteria pass.",
+      "default_autonomy": "propose-only",
+      "denied_without_approval": ["any write outside a sandbox"]
+    }
+  },
+  "classification": {
+    "low_confidence_behavior": "If no profile's signals clearly dominate, ask the user ONE clarifying question to pick the profile (late commitment) rather than guessing.",
+    "default_profile": "fuzzy"
+  }
+}

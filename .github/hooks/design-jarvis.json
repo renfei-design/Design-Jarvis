@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "./scripts/hooks/guard-paths.sh",
+        "cwd": ".",
+        "timeoutSec": 10,
+        "command": "./scripts/hooks/guard-paths.sh",
+        "timeout": 10
+      },
+      {
+        "type": "command",
+        "bash": "./scripts/hooks/guard-shell-policy.sh",
+        "cwd": ".",
+        "timeoutSec": 10,
+        "command": "./scripts/hooks/guard-shell-policy.sh",
+        "timeout": 10
+      },
+      {
+        "type": "command",
+        "bash": "./scripts/hooks/guard-figma-use.sh",
+        "cwd": ".",
+        "timeoutSec": 10,
+        "command": "./scripts/hooks/guard-figma-use.sh",
+        "timeout": 10
+      }
+    ],
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "./scripts/hooks/validate-figma-result.sh",
+        "cwd": ".",
+        "timeoutSec": 10,
+        "command": "./scripts/hooks/validate-figma-result.sh",
+        "timeout": 10
+      },
+      {
+        "type": "command",
+        "bash": "./scripts/hooks/validate-memory.sh",
+        "cwd": ".",
+        "timeoutSec": 10,
+        "command": "./scripts/hooks/validate-memory.sh",
+        "timeout": 10
+      },
+      {
+        "type": "command",
+        "bash": "./scripts/hooks/validate-customizations.sh",
+        "cwd": ".",
+        "timeoutSec": 60,
+        "command": "./scripts/hooks/validate-customizations.sh",
+        "timeout": 60
+      }
+    ],
+    "subagentStart": [
+      {
+        "type": "command",
+        "bash": "./scripts/hooks/subagent-context.sh",
+        "cwd": ".",
+        "timeoutSec": 10,
+        "command": "./scripts/hooks/subagent-context.sh",
+        "timeout": 10
+      }
+    ],
+    "agentStop": [
+      {
+        "type": "command",
+        "bash": "./scripts/hooks/final-gate.sh",
+        "cwd": ".",
+        "timeoutSec": 10,
+        "command": "./scripts/hooks/final-gate.sh",
+        "timeout": 10
+      }
+    ]
+  }
+}

@@ -1,0 +1,607 @@
+{
+  "name": "design-jarvis-pack",
+  "displayName": "Design Jarvis (Extension)",
+  "description": "Open-source, vendor-neutral product design agents, skills, project memory, and optional Figma workflows.",
+  "version": "0.2.0",
+  "publisher": "design-jarvis-community",
+  "engines": {
+    "vscode": "^1.101.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onMcpServerDefinitionProvider:designJarvisMcp"
+  ],
+  "main": "./src/extension.js",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "Design Jarvis can install workspace guidance and create project artifacts. Trust the folder before enabling it."
+    },
+    "virtualWorkspaces": {
+      "supported": false
+    }
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "designJarvis.installForMe",
+        "title": "Design Jarvis: Install for Me"
+      },
+      {
+        "command": "designJarvis.setupWorkspace",
+        "title": "Design Jarvis: Set Up This Workspace"
+      },
+      {
+        "command": "designJarvis.checkSetup",
+        "title": "Design Jarvis: Check Setup"
+      },
+      {
+        "command": "designJarvis.openGuide",
+        "title": "Design Jarvis: Open Getting Started Guide"
+      },
+      {
+        "command": "designJarvis.openChat",
+        "title": "Design Jarvis: Open Agent Chat"
+      },
+      {
+        "command": "designJarvis.startWork",
+        "title": "Design Jarvis: Start a Design Task"
+      },
+      {
+        "command": "designJarvis.refreshProjects",
+        "title": "Design Jarvis: Refresh Projects",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "designJarvis.openProjects",
+        "title": "Design Jarvis: Open Projects"
+      },
+      {
+        "command": "designJarvis.refreshSkillPacks",
+        "title": "Design Jarvis: Sync and Refresh Skill Packs",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "designJarvis.openSkillPacks",
+        "title": "Design Jarvis: Open Skill Packs"
+      },
+      {
+        "command": "designJarvis.searchSkills",
+        "title": "Design Jarvis: Search Skills",
+        "icon": "$(search)"
+      },
+      {
+        "command": "designJarvis.installSkillPackFromFolder",
+        "title": "Design Jarvis: Install Skills from Folder",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "designJarvis.showSkillPackDetails",
+        "title": "Design Jarvis: Show Skill Pack Details"
+      },
+      {
+        "command": "designJarvis.removeSkillPack",
+        "title": "Design Jarvis: Remove Skill Pack",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "designJarvis.syncSkillPack",
+        "title": "Design Jarvis: Sync Skill Pack",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "designJarvis.syncAllSkillPacks",
+        "title": "Design Jarvis: Sync Installed Skills",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "designJarvis.useSkillInChat",
+        "title": "Design Jarvis: Use Skill with Working Project",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "designJarvis.openPromptLibrary",
+        "title": "Design Jarvis: Open Prompt Library"
+      },
+      {
+        "command": "designJarvis.refreshPromptLibrary",
+        "title": "Design Jarvis: Refresh Prompt Library",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "designJarvis.newPrompt",
+        "title": "Design Jarvis: New Prompt",
+        "icon": "$(add)"
+      },
+      {
+        "command": "designJarvis.editPrompt",
+        "title": "Design Jarvis: Edit Prompt",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "designJarvis.removePrompt",
+        "title": "Design Jarvis: Remove Prompt",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "designJarvis.usePromptInChat",
+        "title": "Design Jarvis: Use Prompt with Working Project",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "designJarvis.openAgents",
+        "title": "Design Jarvis: Open Agents"
+      },
+      {
+        "command": "designJarvis.refreshAgents",
+        "title": "Design Jarvis: Refresh Agents",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "designJarvis.useAgentInChat",
+        "title": "Design Jarvis: Ask About Working Project",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "designJarvis.showAgentDetails",
+        "title": "Design Jarvis: View Agent Role",
+        "icon": "$(info)"
+      },
+      {
+        "command": "designJarvis.openAgentFile",
+        "title": "Design Jarvis: Open Agent File",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "designJarvis.newProject",
+        "title": "Design Jarvis: New Project",
+        "icon": "$(add)"
+      },
+      {
+        "command": "designJarvis.setActiveProject",
+        "title": "Design Jarvis: Set as Working Project",
+        "icon": "$(star-full)"
+      },
+      {
+        "command": "designJarvis.startProject",
+        "title": "Design Jarvis: Start with This Project",
+        "icon": "$(play)"
+      },
+      {
+        "command": "designJarvis.openProjectBrief",
+        "title": "Design Jarvis: Open Project Brief",
+        "icon": "$(book)"
+      },
+      {
+        "command": "designJarvis.editProjectBrief",
+        "title": "Design Jarvis: Edit Project Brief",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "designJarvis.addProjectFigmaLink",
+        "title": "Design Jarvis: Add Figma Link",
+        "icon": "$(link)"
+      },
+      {
+        "command": "designJarvis.initializeProjectMemory",
+        "title": "Design Jarvis: Initialize Project Memory",
+        "icon": "$(history)"
+      },
+      {
+        "command": "designJarvis.revealProjectFiles",
+        "title": "Design Jarvis: Reveal Project Files",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "designJarvis.removeProject",
+        "title": "Design Jarvis: Delete Project",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "designJarvis.removeProjectFile",
+        "title": "Design Jarvis: Delete Project File",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "designJarvis.askAboutProject",
+        "title": "Design Jarvis: Work on This Project in Agent Chat",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "designJarvis.openConnectors",
+        "title": "Design Jarvis: Open Connectors"
+      },
+      {
+        "command": "designJarvis.hideSkillPack",
+        "title": "Design Jarvis: Hide Skill Pack",
+        "icon": "$(eye-closed)"
+      },
+      {
+        "command": "designJarvis.showHiddenSkillPack",
+        "title": "Design Jarvis: Show Hidden Skill Pack",
+        "icon": "$(eye)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "designJarvis",
+          "title": "Design Jarvis",
+          "icon": "media/jarvis-designer.svg"
+        }
+      ]
+    },
+    "views": {
+      "designJarvis": [
+        {
+          "type": "webview",
+          "id": "designJarvis.home",
+          "name": "Home"
+        },
+        {
+          "id": "designJarvis.agents",
+          "name": "Agents"
+        },
+        {
+          "id": "designJarvis.projects",
+          "name": "Projects",
+          "visibility": "hidden"
+        },
+        {
+          "id": "designJarvis.skillPacks",
+          "name": "Skill Packs"
+        },
+        {
+          "id": "designJarvis.connectors",
+          "name": "Connectors",
+          "visibility": "hidden"
+        },
+        {
+          "id": "designJarvis.promptLibrary",
+          "name": "Prompt Library"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "designJarvis.projects",
+        "contents": "Open or set up a project to see specs, prototypes, and memory here.\n[Set up this workspace](command:designJarvis.setupWorkspace)"
+      },
+      {
+        "view": "designJarvis.promptLibrary",
+        "contents": "Create reusable prompt files that appear as /commands in agent chat.\n[New prompt](command:designJarvis.newPrompt)"
+      },
+      {
+        "view": "designJarvis.agents",
+        "contents": "Specialist agents are routed through Design Jarvis. Run Install for Me if any role shows Needs install.\n[Install for me](command:designJarvis.installForMe)"
+      },
+      {
+        "view": "designJarvis.connectors",
+        "contents": "Connectors used by enabled and installed skill packs appear here.\n[Refresh connectors](command:designJarvis.refreshSkillPacks)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "designJarvis.refreshProjects",
+          "when": "view == designJarvis.projects",
+          "group": "navigation"
+        },
+        {
+          "command": "designJarvis.refreshSkillPacks",
+          "when": "view == designJarvis.skillPacks",
+          "group": "navigation@2"
+        },
+        {
+          "command": "designJarvis.searchSkills",
+          "when": "view == designJarvis.skillPacks",
+          "group": "navigation@0"
+        },
+        {
+          "command": "designJarvis.installSkillPackFromFolder",
+          "when": "view == designJarvis.skillPacks",
+          "group": "navigation@1"
+        },
+        {
+          "command": "designJarvis.newPrompt",
+          "when": "view == designJarvis.promptLibrary",
+          "group": "navigation@1"
+        },
+        {
+          "command": "designJarvis.refreshPromptLibrary",
+          "when": "view == designJarvis.promptLibrary",
+          "group": "navigation@2"
+        },
+        {
+          "command": "designJarvis.refreshAgents",
+          "when": "view == designJarvis.agents",
+          "group": "navigation"
+        },
+        {
+          "command": "designJarvis.newProject",
+          "when": "view == designJarvis.projects",
+          "group": "navigation@0"
+        },
+        {
+          "command": "designJarvis.showHiddenSkillPack",
+          "when": "view == designJarvis.skillPacks",
+          "group": "navigation@3"
+        },
+        {
+          "command": "designJarvis.refreshSkillPacks",
+          "when": "view == designJarvis.connectors",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "designJarvis.removeSkillPack",
+          "when": "view == designJarvis.skillPacks && viewItem == installedSkillPack",
+          "group": "inline"
+        },
+        {
+          "command": "designJarvis.syncSkillPack",
+          "when": "view == designJarvis.skillPacks && viewItem == installedSkillPack",
+          "group": "inline@1"
+        },
+        {
+          "command": "designJarvis.useSkillInChat",
+          "when": "view == designJarvis.skillPacks && viewItem == skillPackSkill",
+          "group": "inline@0"
+        },
+        {
+          "command": "designJarvis.usePromptInChat",
+          "when": "view == designJarvis.promptLibrary && viewItem == promptLibraryPrompt",
+          "group": "inline@0"
+        },
+        {
+          "command": "designJarvis.editPrompt",
+          "when": "view == designJarvis.promptLibrary && viewItem == promptLibraryPrompt",
+          "group": "inline@1"
+        },
+        {
+          "command": "designJarvis.removePrompt",
+          "when": "view == designJarvis.promptLibrary && viewItem == promptLibraryPrompt",
+          "group": "inline@2"
+        },
+        {
+          "command": "designJarvis.useAgentInChat",
+          "when": "view == designJarvis.agents && viewItem == designJarvisAgent",
+          "group": "inline@0"
+        },
+        {
+          "command": "designJarvis.showAgentDetails",
+          "when": "view == designJarvis.agents && viewItem == designJarvisAgent",
+          "group": "inline@1"
+        },
+        {
+          "command": "designJarvis.openAgentFile",
+          "when": "view == designJarvis.agents && viewItem == designJarvisAgent",
+          "group": "inline@2"
+        },
+        {
+          "command": "designJarvis.setActiveProject",
+          "when": "view == designJarvis.projects && viewItem == designJarvisProject",
+          "group": "inline@0"
+        },
+        {
+          "command": "designJarvis.startProject",
+          "when": "view == designJarvis.projects && (viewItem == designJarvisProject || viewItem == designJarvisProjectActive)",
+          "group": "inline@1"
+        },
+        {
+          "command": "designJarvis.askAboutProject",
+          "when": "view == designJarvis.projects && (viewItem == designJarvisProject || viewItem == designJarvisProjectActive)",
+          "group": "inline@2"
+        },
+        {
+          "command": "designJarvis.openProjectBrief",
+          "when": "view == designJarvis.projects && (viewItem == designJarvisProject || viewItem == designJarvisProjectActive)",
+          "group": "navigation@0"
+        },
+        {
+          "command": "designJarvis.editProjectBrief",
+          "when": "view == designJarvis.projects && (viewItem == designJarvisProject || viewItem == designJarvisProjectActive)",
+          "group": "navigation@1"
+        },
+        {
+          "command": "designJarvis.addProjectFigmaLink",
+          "when": "view == designJarvis.projects && (viewItem == designJarvisProject || viewItem == designJarvisProjectActive)",
+          "group": "navigation@2"
+        },
+        {
+          "command": "designJarvis.initializeProjectMemory",
+          "when": "view == designJarvis.projects && (viewItem == designJarvisProject || viewItem == designJarvisProjectActive)",
+          "group": "navigation@3"
+        },
+        {
+          "command": "designJarvis.revealProjectFiles",
+          "when": "view == designJarvis.projects && (viewItem == designJarvisProject || viewItem == designJarvisProjectActive)",
+          "group": "navigation@4"
+        },
+        {
+          "command": "designJarvis.removeProject",
+          "when": "view == designJarvis.projects && (viewItem == designJarvisProject || viewItem == designJarvisProjectActive)",
+          "group": "navigation@9"
+        },
+        {
+          "command": "designJarvis.removeProjectFile",
+          "when": "view == designJarvis.projects && (viewItem == designJarvisProjectFile || viewItem == designJarvisPrototypeFile)",
+          "group": "inline@9"
+        },
+        {
+          "command": "designJarvis.hideSkillPack",
+          "when": "view == designJarvis.skillPacks && (viewItem == builtInSkillPack || viewItem == installedSkillPack)",
+          "group": "inline@9"
+        }
+      ]
+    },
+    "walkthroughs": [
+      {
+        "id": "designJarvis.getStarted",
+        "title": "Get started with Design Jarvis",
+        "description": "Set up Design Jarvis and start your first design task.",
+        "steps": [
+          {
+            "id": "openHome",
+            "title": "Open Design Jarvis",
+            "description": "Click the Design Jarvis icon in the left sidebar to open the Home panel.",
+            "media": {
+              "markdown": "media/walkthrough.md"
+            },
+            "completionEvents": [
+              "onView:designJarvis.home"
+            ]
+          },
+          {
+            "id": "installAgent",
+            "title": "Install the agents",
+            "description": "Run the install action once so **Design Jarvis (Extension)** and its specialists appear in agent chat.\n[Install or refresh Design Jarvis](command:designJarvis.installForMe)",
+            "media": {
+              "markdown": "media/walkthrough-agents.md"
+            },
+            "completionEvents": [
+              "onCommand:designJarvis.installForMe"
+            ]
+          },
+          {
+            "id": "useSkills",
+            "title": "Use and add skills",
+            "description": "Built-in skills load automatically in chat. Open Skill Packs to see them, or add your own with Install Skills from Folder.\n[Open Skill Packs](command:designJarvis.openSkillPacks)\n[Install skills from folder](command:designJarvis.installSkillPackFromFolder)",
+            "media": {
+              "markdown": "media/walkthrough-skills.md"
+            },
+            "completionEvents": [
+              "onCommand:designJarvis.openSkillPacks",
+              "onCommand:designJarvis.installSkillPackFromFolder"
+            ]
+          },
+          {
+            "id": "savePrompts",
+            "title": "Save reusable prompts",
+            "description": "Create prompt files in the Prompt Library that appear as /commands in agent chat.\n[New prompt](command:designJarvis.newPrompt)",
+            "media": {
+              "markdown": "media/walkthrough-prompts.md"
+            },
+            "completionEvents": [
+              "onCommand:designJarvis.newPrompt"
+            ]
+          },
+          {
+            "id": "updateExtension",
+            "title": "Choose a trusted distribution",
+            "description": "Install updates from the editor marketplace or another distribution source you trust. Design Jarvis does not require a private release feed.\n[Open Home](command:designJarvis.home.focus)",
+            "media": {
+              "markdown": "media/walkthrough-updates.md"
+            },
+            "completionEvents": [
+              "onView:designJarvis.home"
+            ]
+          }
+        ]
+      }
+    ],
+    "mcpServerDefinitionProviders": [
+      {
+        "id": "designJarvisMcp",
+        "label": "Design Jarvis MCP Servers"
+      }
+    ],
+    "chatSkills": [
+      {
+        "path": "./skills/a11y-review/SKILL.md"
+      },
+      {
+        "path": "./skills/bugfiler/SKILL.md"
+      },
+      {
+        "path": "./skills/canvas-read/SKILL.md"
+      },
+      {
+        "path": "./skills/code-connect/SKILL.md"
+      },
+      {
+        "path": "./skills/competitive-intel/SKILL.md"
+      },
+      {
+        "path": "./skills/content-review/SKILL.md"
+      },
+      {
+        "path": "./skills/data-explore/SKILL.md"
+      },
+      {
+        "path": "./skills/design-jarvis-slides/SKILL.md"
+      },
+      {
+        "path": "./skills/extract-content-strings/SKILL.md"
+      },
+      {
+        "path": "./skills/feedbackfinder/SKILL.md"
+      },
+      {
+        "path": "./skills/figma-generate-library/SKILL.md"
+      },
+      {
+        "path": "./skills/figma-use/SKILL.md"
+      },
+      {
+        "path": "./skills/generate-ux-handoffspec/SKILL.md"
+      },
+      {
+        "path": "./skills/generate-ux-handoffspec-v2/SKILL.md"
+      },
+      {
+        "path": "./skills/hifi-design/SKILL.md"
+      },
+      {
+        "path": "./skills/implement-design/SKILL.md"
+      },
+      {
+        "path": "./skills/kb-search/SKILL.md"
+      },
+      {
+        "path": "./skills/loop-goal/SKILL.md"
+      },
+      {
+        "path": "./skills/memory/SKILL.md"
+      },
+      {
+        "path": "./skills/product-screen/SKILL.md"
+      },
+      {
+        "path": "./skills/stringweaver/SKILL.md"
+      },
+      {
+        "path": "./skills/ux-brief/SKILL.md"
+      },
+      {
+        "path": "./skills/ux-design-spec-handoff-v1/SKILL.md"
+      }
+    ],
+    "chatInstructions": [
+      {
+        "path": "./assets/user-prompts/design-jarvis-core.instructions.md"
+      }
+    ]
+  },
+  "scripts": {
+    "sync-assets": "node scripts/sync-assets.mjs",
+    "check": "node --check src/extension.js && node --check src/homeView.js && node --check src/projectTree.js && node --check src/projects.js && node --check src/agentsView.js && node --check src/skillPacks.js && node --check src/promptLibrary.js && node --check src/trustCenter.js && node --check src/validation.js && node --check scripts/sync-assets.mjs && node --test test/*.test.js",
+    "package": "npm run sync-assets && vsce package"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.6.3"
+  },
+  "private": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/renfei-design/Design-Jarvis.git"
+  },
+  "homepage": "https://github.com/renfei-design/Design-Jarvis#readme",
+  "bugs": {
+    "url": "https://github.com/renfei-design/Design-Jarvis/issues"
+  }
+}

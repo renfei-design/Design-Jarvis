@@ -1,0 +1,43 @@
+{
+  "id": "06-memory-persistence",
+  "title": "Decision logging and memory hygiene",
+  "category": "memory",
+  "harness_mode": "memory-maintenance",
+  "prompt": "We just decided to use a left sidebar with collapsible sections for the settings IA, instead of top tabs. Log this decision and update the project memory.",
+  "expected_specialists": ["Design Ops"],
+  "expected_artifacts": ["decision-entry-with-D-number", "updated-decisions-md", "updated-memory-md-or-manifest-json"],
+  "success_criteria": [
+    "Design Ops creates a new D-number entry (D1, D2, etc.) following the decision template.",
+    "Entry includes Status, Date, Decision, Rationale, Alternatives considered, Impact.",
+    "Entry is written to .jarvis/memory/projects/<slug>/decisions.md (real file write, not chat-only).",
+    "Project core memory stays on the Core + Archive schema: memory.md is updated when current project state changes, and manifest.json remains valid JSON.",
+    "If no active project context exists, Design Ops asks for the project slug instead of guessing.",
+    "Output confirms the file path and the D-number assigned."
+  ],
+  "deterministic_validators": [
+    {
+      "type": "file_contains",
+      "pathPattern": ".jarvis/memory/projects/*/decisions.md",
+      "pattern": "D\\d+[\\s\\S]*(Status|\\*\\*Status:\\*\\*)[\\s\\S]*(Decision|\\*\\*Decision:\\*\\*)[\\s\\S]*(Rationale|\\*\\*Rationale:\\*\\*)",
+      "description": "A project decisions.md file contains a D-numbered decision with required fields."
+    },
+    {
+      "type": "json_valid",
+      "pathPattern": ".jarvis/memory/projects/*/manifest.json",
+      "description": "Project manifests remain valid JSON after the memory update."
+    },
+    {
+      "type": "transcript_contains",
+      "pattern": "decisions\\.md",
+      "description": "The agent confirms or references the canonical decisions.md path."
+    },
+    {
+      "type": "tool_input_contains",
+      "pattern": "decisions\\.md",
+      "description": "A tool call attempted to write or inspect the canonical decisions.md path."
+    }
+  ],
+  "max_tool_calls": 10,
+  "max_tokens": 40000,
+  "notes": "Tests Design Ops file writes + memory schema discipline."
+}

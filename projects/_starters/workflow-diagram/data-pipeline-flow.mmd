@@ -1,0 +1,26 @@
+%% Title: Data pipeline flow
+%% Purpose: Show data movement, validation, and monitoring stages.
+%% Assumptions:
+%% - Monitoring is in scope for the first version.
+%% Open questions:
+%% - Confirm retry and quarantine behavior.
+flowchart LR
+    subgraph Source
+      A[Source system]
+    end
+    subgraph Ingestion
+      B[Ingest data]
+      C{Schema valid?}
+    end
+    subgraph Processing
+      D[Transform]
+      E[Validate quality]
+    end
+    subgraph Serving
+      F[Publish dataset]
+      G[Monitor health]
+    end
+    A --> B --> C
+    C -- Yes --> D --> E --> F --> G
+    C -- No --> Q[Quarantine records]
+    E -->|Fails quality| Q

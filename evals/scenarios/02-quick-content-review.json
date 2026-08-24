@@ -1,0 +1,19 @@
+{
+  "id": "02-quick-content-review",
+  "title": "Quick UI text review on a single frame",
+  "category": "review",
+  "harness_mode": "design-review",
+  "prompt": "Review the UI text on the currently selected Figma frame for plain language, consistency, inclusivity, and actionability. Just give me a before/after table — don't apply changes yet.",
+  "expected_specialists": ["Designer"],
+  "expected_artifacts": ["before-after-table"],
+  "success_criteria": [
+    "Output is a structured before/after table covering every text node in the frame.",
+    "Each suggested change cites the specific style rule it addresses (capitalization, word choice, brevity, etc.).",
+    "Designer does NOT apply changes (user said 'don't apply yet').",
+    "Total tool calls under 12 — this should be a fast scan, not a full sprint.",
+    "Design Lead is NOT invoked (this is feedback work, not a deliverable that triggers the review loop)."
+  ],
+  "max_tool_calls": 12,
+  "max_tokens": 50000,
+  "notes": "Tests scope discipline — orchestrator should not over-route. Designer output is feedback, not artifact."
+}

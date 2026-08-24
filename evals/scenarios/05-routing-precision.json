@@ -1,0 +1,20 @@
+{
+  "id": "05-routing-precision",
+  "title": "Single-shot accessibility audit — no scope creep",
+  "category": "review",
+  "harness_mode": "design-review",
+  "prompt": "Just check the contrast on the buttons in the currently selected frame. Nothing else.",
+  "expected_specialists": ["Designer"],
+  "expected_artifacts": ["contrast-findings"],
+  "success_criteria": [
+    "ONLY the Designer is invoked. No other specialist runs.",
+    "Output names each button checked, the foreground/background hex, the actual ratio, the required ratio, and pass/fail.",
+    "If any button fails, a specific token from the active project system is suggested, or a neutral fallback is clearly labeled.",
+    "Designer uses a11y-review for the focused contrast check without broadening into a full audit.",
+    "Total tool calls under 8.",
+    "Design Lead is NOT invoked (a11y output is feedback, not a deliverable)."
+  ],
+  "max_tool_calls": 8,
+  "max_tokens": 30000,
+  "notes": "Tests routing precision. The orchestrator must NOT over-deliver. Common failure: invoking Designer with extra audit skills 'while we're at it'."
+}

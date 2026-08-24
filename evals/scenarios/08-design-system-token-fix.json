@@ -1,0 +1,19 @@
+{
+  "id": "08-design-system-token-fix",
+  "title": "Bind hardcoded colors to project tokens",
+  "category": "review",
+  "harness_mode": "figma-write",
+  "prompt": "The current frame has a number of hardcoded hex colors. Bind them to the right tokens from the active project design system.",
+  "expected_specialists": ["Designer", "Design Lead"],
+  "expected_artifacts": ["updated-frame-in-figma"],
+  "success_criteria": [
+    "Designer scans the frame and reports % of fills/strokes/text colors currently bound to tokens (before).",
+    "For each hardcoded color, the closest matching active project token is identified; missing tokens are not invented silently.",
+    "Bindings are applied via use_figma in batched calls (not one call per color).",
+    "Final report shows the after-state coverage % and lists any colors that have no matching token (flagged for design review).",
+    "Design Lead reviews the change before delivery."
+  ],
+  "max_tool_calls": 25,
+  "max_tokens": 120000,
+  "notes": "Tests Designer batching discipline + token coverage reporting."
+}

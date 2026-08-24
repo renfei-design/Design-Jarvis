@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{TITLE}}</title>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "dark", securityLevel: "strict" });
+  </script>
+  <style>
+    :root {
+      --accent: #117865;
+      --bg: #0a0a0f;
+      --panel: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.14);
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --accent: #2dd4a8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 20% 10%, rgba(17,120,101,0.24), transparent 34%), var(--bg);
+      color: var(--text);
+      font-family: system-ui, sans-serif;
+    }
+    main { max-width: 1180px; margin: 0 auto; padding: 48px 32px; }
+    header { margin-bottom: 28px; }
+    .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.12em; font-size: 12px; font-weight: 700; }
+    h1 { margin: 8px 0 12px; font-size: 34px; line-height: 1.2; }
+    p { color: var(--muted); line-height: 1.6; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; }
+    .card { border: 1px solid var(--border); background: var(--panel); border-radius: 14px; padding: 20px; }
+    .diagram { overflow: auto; min-height: 520px; }
+    h2 { font-size: 14px; color: var(--text); margin: 0 0 8px; }
+    ul { margin: 0 0 20px 18px; padding: 0; color: var(--muted); line-height: 1.5; }
+    footer { margin-top: 20px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="eyebrow">Workflow diagram</div>
+      <h1>{{TITLE}}</h1>
+      <p>{{PURPOSE}}</p>
+    </header>
+    <div class="layout">
+      <section class="card diagram">
+        <pre class="mermaid">
+{{MERMAID_SOURCE}}
+        </pre>
+      </section>
+      <aside class="card">
+        <h2>Summary</h2>
+        <p>{{SUMMARY}}</p>
+        <h2>Assumptions</h2>
+        <ul>{{ASSUMPTIONS}}</ul>
+        <h2>Open questions</h2>
+        <ul>{{OPEN_QUESTIONS}}</ul>
+      </aside>
+    </div>
+    <footer>Single HTML preview. Mermaid loads from CDN when opened online. Keep the .mmd file as the editable source of truth.</footer>
+  </main>
+</body>
+</html>

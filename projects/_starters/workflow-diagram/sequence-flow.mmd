@@ -1,0 +1,18 @@
+%% Title: Sequence flow
+%% Purpose: Show actor and system handoffs over time.
+%% Assumptions:
+%% - Use for interaction timing, API handoffs, or review workflows.
+%% Open questions:
+%% - Confirm async notifications and timeout behavior.
+sequenceDiagram
+    actor Designer
+    participant Jarvis as Design Jarvis
+    participant Specialist
+    participant Figma
+    participant Memory
+    Designer->>Jarvis: Request workflow diagram
+    Jarvis->>Specialist: Route to Designer agent
+    Specialist->>Specialist: Build Mermaid source
+    Specialist->>Figma: Optional promotion after approval
+    Specialist->>Memory: Optional decision log
+    Specialist-->>Designer: Return source, preview, notes

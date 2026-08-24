@@ -1,0 +1,27 @@
+{
+  "name": "design-jarvis-core",
+  "displayName": "Jarvis Core",
+  "version": "0.1.0",
+  "owner": "Design Jarvis contributors",
+  "status": "built-in",
+  "description": "Core Design Jarvis capabilities for context discovery, canvas reading, memory, Figma execution, Code Connect, and design-system libraries.",
+  "skills": [
+    "canvas-read",
+    "figma-use",
+    "kb-search",
+    "memory",
+    "code-connect",
+    "figma-generate-library",
+    "loop-goal"
+  ],
+  "designSystems": [],
+  "requires": [],
+  "permissions": [
+    "read-local-context",
+    "read-public-web",
+    "write-local-artifacts",
+    "optional-read-figma",
+    "optional-write-figma"
+  ],
+  "safety": "read-only by default; verifies local and Figma writes"
+}

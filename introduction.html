@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design Jarvis — Open product-design agents</title>
+  <style>
+    :root { color-scheme: light dark; font-family: ui-sans-serif, system-ui, sans-serif; line-height: 1.55; }
+    body { margin: 0; background: #f8fafc; color: #0f172a; }
+    main { width: min(920px, calc(100% - 40px)); margin: 0 auto; padding: 72px 0; }
+    h1 { max-width: 760px; font-size: clamp(42px, 8vw, 76px); line-height: .98; letter-spacing: -.04em; margin: 0 0 24px; }
+    .lede { max-width: 720px; font-size: 20px; color: #475569; }
+    .pill { display: inline-block; margin-bottom: 24px; padding: 6px 10px; border: 1px solid #93c5fd; border-radius: 999px; color: #1d4ed8; background: #eff6ff; font-weight: 700; font-size: 13px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 48px; }
+    article { padding: 24px; border: 1px solid #cbd5e1; border-radius: 12px; background: #fff; }
+    article h2 { margin-top: 0; font-size: 18px; }
+    code { padding: 2px 5px; border-radius: 4px; background: #e2e8f0; }
+    @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+    @media (prefers-color-scheme: dark) {
+      body { background: #0f172a; color: #f8fafc; }
+      .lede { color: #cbd5e1; }
+      article { background: #1e293b; border-color: #475569; }
+      .pill { background: #172554; color: #bfdbfe; border-color: #1d4ed8; }
+      code { background: #334155; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <span class="pill">Open source · vendor neutral · MIT</span>
+    <h1>A reusable AI design team for any product.</h1>
+    <p class="lede">Design Jarvis combines specialist agents, product-design skills, project memory, optional Figma workflows, and evidence-based quality gates. Teams can use the complete system or adopt individual playbooks.</p>
+    <section class="grid" aria-label="Capabilities">
+      <article><h2>Specialist team</h2><p>Direction, product design, research, implementation, and operations are separate roles with explicit handoffs.</p></article>
+      <article><h2>Your design system</h2><p>The agents discover tokens and components from the project instead of assuming a fixed vendor library.</p></article>
+      <article><h2>Durable artifacts</h2><p>Specs, prototypes, research, diagrams, and memory live under predictable <code>projects/&lt;slug&gt;</code> paths.</p></article>
+      <article><h2>Verified outcomes</h2><p>Designs return screenshots and IDs, prototypes run builds and tests, and research cites current sources.</p></article>
+    </section>
+  </main>
+</body>
+</html>

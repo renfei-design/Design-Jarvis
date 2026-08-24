@@ -1,0 +1,102 @@
+{
+  // Design Jarvis maintainer tasks — the eval "safety net".
+  // These run the local eval harness (evals/) and never ship in the extension.
+  // Run via: Terminal > Run Task… (or Cmd+Shift+P → "Tasks: Run Task").
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Jarvis: Health Check",
+      "detail": "Fast structural lint of the eval harness + memory schema. No token needed.",
+      "type": "shell",
+      "command": "node evals/health-check.mjs",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test"
+    },
+    {
+      "label": "Jarvis: Propose Skill Updates",
+      "detail": "Turn failed eval results into reviewable skill-update candidates (writes evals/skill-candidates/<date>/).",
+      "type": "shell",
+      "command": "node evals/propose-skill-updates.mjs --write",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test"
+    },
+    {
+      "label": "Jarvis: Improve Jarvis",
+      "detail": "One-click flywheel: health check, then propose skill updates. Review the candidate files in the editor before applying anything.",
+      "dependsOrder": "sequence",
+      "dependsOn": ["Jarvis: Health Check", "Jarvis: Propose Skill Updates"],
+      "problemMatcher": [],
+      "group": "test"
+    },
+    {
+      "label": "Jarvis: Full Eval Run",
+      "detail": "Grade a captured JSONL agent session. Optional external grading uses JUDGE_ENDPOINT, JUDGE_TOKEN, and JUDGE_MODEL.",
+      "type": "shell",
+      "command": "node evals/run.mjs --scenario ${input:evalScenario} --log \"${input:evalLog}\"",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test"
+    },
+    {
+      "label": "Jarvis: Loop — Classify Goal",
+      "detail": "Suggest a loop profile for a goal (hint for /loop-goal). No writes.",
+      "type": "shell",
+      "command": "node evals/loop/cli.mjs classify --goal \"${input:loopGoal}\"",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test"
+    },
+    {
+      "label": "Jarvis: Loop — Verify Gate",
+      "detail": "Run a locked loop rubric's deterministic gate. Exits non-zero if RED.",
+      "type": "shell",
+      "command": "node evals/loop/cli.mjs verify --rubric \"${input:loopRubric}\" --json",
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": "test"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "evalScenario",
+      "type": "pickString",
+      "description": "Which eval scenario to grade against?",
+      "options": [
+        "01-competitive-research",
+        "02-quick-content-review",
+        "03-hifi-from-wireframe",
+        "04-prototype-visual-fidelity",
+        "05-routing-precision",
+        "06-memory-persistence",
+        "07-spec-generation",
+        "08-design-system-token-fix",
+        "09-iteration-on-feedback",
+        "10-tiny-text-tweak",
+        "11-large-context-discipline",
+        "12-skill-loading-discipline"
+      ]
+    },
+    {
+      "id": "evalLog",
+      "type": "promptString",
+      "description": "Path to the captured agent-session JSONL file to grade."
+    },
+    {
+      "id": "loopGoal",
+      "type": "promptString",
+      "description": "Goal for the Jarvis Improvement Loop to classify."
+    },
+    {
+      "id": "loopRubric",
+      "type": "promptString",
+      "description": "Path to a locked loop rubric.json (e.g. evals/loop/runs/<id>/rubric.json)."
+    }
+  ]
+}

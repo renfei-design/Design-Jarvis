@@ -1,0 +1,17 @@
+%% Title: Decision tree
+%% Purpose: Show branching logic for a product or policy decision.
+%% Assumptions:
+%% - Branch labels should be mutually exclusive.
+%% Open questions:
+%% - Confirm fallback behavior for unknown inputs.
+flowchart TD
+    Start([Evaluate request]) --> Permission{Has permission?}
+    Permission -- No --> Block[Show permission message]
+    Permission -- Yes --> Complete{Required data complete?}
+    Complete -- No --> Missing[Ask for missing details]
+    Complete -- Yes --> Risk{Needs review?}
+    Risk -- Yes --> Review[Route to reviewer]
+    Risk -- No --> Approve[Auto-approve]
+    Review --> Approved{Reviewer approves?}
+    Approved -- Yes --> Approve
+    Approved -- No --> Reject[Return with reason]

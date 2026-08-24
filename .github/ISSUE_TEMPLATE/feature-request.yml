@@ -1,0 +1,30 @@
+name: Feature request
+description: Propose a cross-industry improvement to the public core.
+title: "[Feature]: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Which user or contributor problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: Describe observable behavior and completion evidence.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and scope
+      description: What alternatives did you consider, and should this be core or an optional organization-specific pack?
+  - type: checkboxes
+    id: neutrality
+    attributes:
+      label: Public-core fit
+      options:
+        - label: This can work without a required private connector or fixed vendor design system.
+          required: true

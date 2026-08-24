@@ -1,0 +1,18 @@
+%% Title: Feature workflow
+%% Purpose: Show the primary product flow, decisions, and recovery paths.
+%% Assumptions:
+%% - Replace sample labels with project-specific language.
+%% Open questions:
+%% - Confirm which failure states are in scope.
+flowchart TD
+    Start([User starts task]) --> Input[Enter required details]
+    Input --> Validate{Details valid?}
+    Validate -- Yes --> Submit[Submit request]
+    Validate -- No --> Fix[Show inline guidance]
+    Fix --> Input
+    Submit --> Process[System processes request]
+    Process --> Success([Task complete])
+    Process --> Error[Show recoverable error]
+    Error --> Retry{Try again?}
+    Retry -- Yes --> Submit
+    Retry -- No --> Exit([Exit flow])

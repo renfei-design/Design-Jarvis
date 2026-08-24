@@ -1,0 +1,19 @@
+{
+  "id": "01-competitive-research",
+  "title": "Competitive analysis of warehouse browser UX",
+  "category": "research",
+  "harness_mode": "research",
+  "prompt": "Research how Snowflake, Databricks, and BigQuery handle their warehouse/lakehouse browser UI. I want to know how they organize schemas, tables, and previews. Build a short comparison report in Figma when you're done.",
+  "expected_specialists": ["UX Researcher", "Design Lead"],
+  "expected_artifacts": ["competitive-analysis-report-in-figma"],
+  "success_criteria": [
+    "Report cites at least 3 competitors with at least one concrete UX pattern per competitor.",
+    "All citations include real URLs to public docs, blogs, or community posts.",
+    "Report distinguishes observed facts from analysis/recommendations.",
+    "Design Lead reviews the report before final delivery.",
+    "Report exists as a Figma frame, not just chat output."
+  ],
+  "max_tool_calls": 40,
+  "max_tokens": 200000,
+  "notes": "Tests UX Researcher + Design Lead review loop + figma-doc skill."
+}

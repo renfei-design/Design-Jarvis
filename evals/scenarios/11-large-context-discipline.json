@@ -1,0 +1,37 @@
+{
+  "id": "11-large-context-discipline",
+  "title": "Multi-screen sprint — context budget discipline",
+  "category": "wireframe",
+  "harness_mode": "figma-write",
+  "prompt": "I need wireframes for the full lakehouse onboarding flow: welcome screen, connect data source, choose schema, preview tables, confirm. Five screens total. Build them in Figma.",
+  "expected_specialists": ["Designer", "Design Lead"],
+  "expected_artifacts": ["five-wireframe-frames-in-figma"],
+  "success_criteria": [
+    "All five screens are produced as Figma frames.",
+    "Total use_figma calls average <= 4 per screen (per the figma-use batching rule). Hard cap: 24 total.",
+    "Wireframes are grayscale/structural — not hi-fi.",
+    "Each screen explicitly addresses default + at least one alternate state (empty/loading/error).",
+    "Design Lead reviews after all five exist (one synthesis pass), not after each individual screen."
+  ],
+  "deterministic_validators": [
+    {
+      "type": "tool_count",
+      "toolPattern": "figma-use_figma|generate_figma_design",
+      "max": 24,
+      "description": "Figma write/capture calls stay within the batching hard cap."
+    },
+    {
+      "type": "figma_created_node_ids",
+      "description": "Figma write output includes created node ID evidence."
+    },
+    {
+      "type": "transcript_contains",
+      "pattern": "welcome|connect data source|schema|preview|confirm",
+      "flags": "i",
+      "description": "Transcript references the requested five-screen onboarding flow."
+    }
+  ],
+  "max_tool_calls": 40,
+  "max_tokens": 250000,
+  "notes": "Tests batching discipline at scale and the 'don't review each one individually' efficiency rule."
+}

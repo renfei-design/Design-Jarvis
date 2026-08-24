@@ -1,0 +1,9 @@
+{
+  // Optional Design Jarvis integration. The core agent system works without it.
+  "servers": {
+    "figma": {
+      "url": "https://mcp.figma.com/mcp",
+      "type": "http"
+    }
+  }
+}

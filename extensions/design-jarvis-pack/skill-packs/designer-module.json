@@ -1,0 +1,22 @@
+{
+  "name": "designer-module",
+  "displayName": "Designer Module",
+  "version": "0.1.0",
+  "owner": "Design Jarvis contributors",
+  "status": "built-in",
+  "description": "Creation workflows for product screens and slide decks using the active project design system.",
+  "skills": [
+    "product-screen",
+    "design-jarvis-slides"
+  ],
+  "designSystems": [],
+  "requires": [],
+  "permissions": [
+    "read-local-context",
+    "read-public-web",
+    "write-local-artifacts",
+    "optional-read-figma",
+    "optional-write-figma"
+  ],
+  "safety": "writes only to project artifact folders and verifies rendered output"
+}

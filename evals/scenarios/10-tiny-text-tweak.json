@@ -1,0 +1,19 @@
+{
+  "id": "10-tiny-text-tweak",
+  "title": "Trivial tweak — should NOT trigger the full review loop",
+  "category": "review",
+  "harness_mode": "figma-write",
+  "prompt": "Change the button label on the selected frame from 'Submit' to 'Save changes'.",
+  "expected_specialists": ["Designer"],
+  "expected_artifacts": ["updated-button-text"],
+  "success_criteria": [
+    "Text is updated via use_figma (real Figma write, not chat output).",
+    "Total tool calls under 5.",
+    "Design Lead is NOT invoked. This is a sub-15-min task that should not trigger the mandatory review loop.",
+    "No other specialist is invoked.",
+    "Response is brief — confirms what changed and where."
+  ],
+  "max_tool_calls": 5,
+  "max_tokens": 15000,
+  "notes": "Tests the conditional-review fix from G4. Today this likely fails — Design Lead is invoked unconditionally. After Phase 4 'review-conditional', this should pass."
+}

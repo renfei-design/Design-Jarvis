@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            extensions/design-jarvis-pack/package-lock.json
+            projects/_starters/app-foundation/package-lock.json
+
+      - name: Install extension dependencies
+        run: npm ci
+        working-directory: extensions/design-jarvis-pack
+
+      - name: Install starter dependencies
+        run: npm ci
+        working-directory: projects/_starters/app-foundation
+
+      - name: Audit extension dependencies
+        run: npm audit --audit-level=moderate
+        working-directory: extensions/design-jarvis-pack
+
+      - name: Audit starter dependencies
+        run: npm audit --audit-level=moderate
+        working-directory: projects/_starters/app-foundation
+
+      - name: Check evaluation configuration
+        run: node evals/health-check.mjs
+
+      - name: Check local links
+        run: node evals/check-links.mjs
+
+      - name: Run evaluation tests
+        run: node --test 'evals/tests/*.test.mjs'
+
+      - name: Check extension source
+        run: npm run check
+        working-directory: extensions/design-jarvis-pack
+
+      - name: Verify generated extension assets
+        run: npm run sync-assets
+        working-directory: extensions/design-jarvis-pack
+
+      - name: Confirm generated assets are current
+        run: git diff --exit-code -- extensions/design-jarvis-pack/assets extensions/design-jarvis-pack/skills extensions/design-jarvis-pack/skill-packs extensions/design-jarvis-pack/package.json
+
+      - name: Build neutral application starter
+        run: npm run build
+        working-directory: projects/_starters/app-foundation

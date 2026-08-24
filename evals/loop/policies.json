@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "description": "Governing policies for the Jarvis Improvement Loop (JIL). Machine-checkable rules that constrain every loop turn regardless of goal. Mirrored into .jarvis/memory/loop/ for cross-session continuity.",
+  "policies": {
+    "grounding_policy": {
+      "id": "grounding_policy",
+      "statement": "Before the first Discover, the loop MUST ground its grading rubric in external evidence (repo first, then trusted web/KB). Every criterion that enters the gate must cite a source and be checkable. A criterion with no source is marked 'unverifiable' and escalated to the user — it never enters the gate, and the loop never grades against an ungrounded criterion.",
+      "rejects_turn_when": [
+        "work began before a locked rubric exists",
+        "a criterion was graded without a cited source",
+        "the LLM both authored and graded a criterion with no external anchor"
+      ]
+    },
+    "loop_contract": {
+      "id": "loop_contract",
+      "statement": "A turn is complete only when all six phases are done and cited: Ground (once, up front) -> Discover -> Hypothesis -> Implement -> Verify -> Next-direction. Discover must cite real probed state. Verify must run the locked gate (deterministic-first) and prove the change. One real change per turn — no batched cosmetic edits.",
+      "rejects_turn_when": [
+        "Discover skipped or not cited with real evidence",
+        "Verify skipped, or the gate was not actually run",
+        "change was cosmetic with no measurable result",
+        "more than one substantive change bundled without individual verification"
+      ]
+    },
+    "plateau_policy": {
+      "id": "plateau_policy",
+      "statement": "If no criterion is failing and no further change produces a measurable, sourced improvement, record ONE plateau note (with evidence) and stop. Never pad turns or manufacture busywork to appear productive.",
+      "rejects_turn_when": [
+        "a turn ran after a genuine plateau was reached",
+        "a turn produced no measurable progress and was not recorded as plateau"
+      ]
+    },
+    "human_gate_policy": {
+      "id": "human_gate_policy",
+      "statement": "Pause and ask for explicit human approval before any irreversible or shared-world action. The loop proposes; a human applies. Default autonomy is propose-only.",
+      "requires_human_approval": [
+        "applying a skill/agent/starter/scenario edit to main (self-improvement is staged as a candidate, never auto-applied)",
+        "editing any evals/results/baseline-*.json file",
+        "git push, force-push, branch/file deletion, or history rewrite",
+        "writing to a real (non-sandbox) Figma file or sending any message/notification",
+        "any credential, recruiter, or external-publish action"
+      ],
+      "sandbox_exception": "Autonomous iteration is allowed WITHOUT prompting only inside a sandbox: a scratch git branch or a projects/<slug>/ working copy, where every action is reversible and the deterministic gate stays green."
+    }
+  },
+  "rejection_criteria": {
+    "description": "A loop turn is REJECTED (not counted as genuine) if any of these hold.",
+    "rules": [
+      "skips Ground, Discover, or Verify",
+      "grades against a criterion with no cited source",
+      "makes a cosmetic change with no measurable, sourced result",
+      "pads turns after a real plateau",
+      "auto-applies a self-improvement edit to main, edits a baseline file, or performs a human-gated action without approval"
+    ]
+  }
+}

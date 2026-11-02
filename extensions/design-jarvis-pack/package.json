@@ -592,7 +592,7 @@
     "package": "npm run sync-assets && vsce package"
   },
   "devDependencies": {
-    "@vscode/vsce": "^3.6.3"
+    "@vscode/vsce": "^4.1.0"
   },
   "private": false,
   "license": "MIT",
